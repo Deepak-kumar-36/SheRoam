@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { mockApi } from '../lib/mockApi'
+import { db } from '../lib/database'
 import {
   Globe, Shield, Home, Map, Calendar, Heart, MessageCircle, Bookmark,
   TrendingUp, Users, Lightbulb, MapPin, Paperclip, Send, ShieldCheck
@@ -73,8 +73,11 @@ export default function CommunityPage({ navigate, addToast, user }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    mockApi.db.getPosts().then((data) => {
+    db.posts.getAll().then((data) => {
       setPosts(data)
+      setLoading(false)
+    }).catch(err => {
+      console.error(err)
       setLoading(false)
     })
   }, [])
@@ -93,12 +96,20 @@ export default function CommunityPage({ navigate, addToast, user }) {
 
   const toggleLike = async (id) => {
     // Optimistic UI
+    const targetPost = posts.find(p => p.id === id)
+    if (!targetPost) return
+
     setPosts(prev => prev.map(p =>
       p.id === id
         ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 }
         : p
     ))
-    await mockApi.db.toggleLike(id)
+    
+    try {
+      await db.posts.like(id, targetPost.likes)
+    } catch {
+      // Revert optimistic if fails
+    }
   }
 
   const toggleBookmark = (id) => {
@@ -112,20 +123,26 @@ export default function CommunityPage({ navigate, addToast, user }) {
     if (!newPostTitle.trim() || !newPostText.trim()) return
     
     const newPostPayload = {
-      category: 'general', catLabel: 'General',
-      author: user?.name || 'Anika R.', 
-      initials: user?.initials || 'AR', 
+      category: 'general', cat_label: 'General',
       color: '#7C3AED',
       verified: true,
       title: newPostTitle,
       content: newPostText,
     }
     
-    const resultingPost = await mockApi.db.createPost(newPostPayload)
-    setPosts(prev => [resultingPost, ...prev])
-    setNewPostTitle('')
-    setNewPostText('')
-    addToast('Your post is live!', 'success')
+    try {
+      const resultingPost = await db.posts.create(newPostPayload)
+      setPosts(prev => [{
+        ...resultingPost,
+        author: user?.name || 'You',
+        initials: user?.initials || 'U'
+      }, ...prev])
+      setNewPostTitle('')
+      setNewPostText('')
+      addToast('Your post is live!', 'success')
+    } catch (e) {
+      addToast('Failed to post. Have you logged in?', 'error')
+    }
   }
 
   const catStyle = {

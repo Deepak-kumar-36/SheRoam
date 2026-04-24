@@ -7,6 +7,7 @@ import MapPage from './pages/MapPage'
 import BuddyPage from './pages/BuddyPage'
 import SOSPage from './pages/SOSPage'
 import CommunityPage from './pages/CommunityPage'
+import VerificationPage from './pages/VerificationPage'
 import { useAuth } from './context/AuthProvider'
 
 const DEMO_USER = { name: 'Anika R.', city: 'Paris', initials: 'AR', tripDates: 'Apr 24–28' }
@@ -20,7 +21,7 @@ export default function App() {
   // Watch session state to redirect automatically
   useEffect(() => {
     if (session && page === 'landing') {
-      setPage('dashboard')
+      setPage('verification') // Force verification flow for new sessions/demo
     } else if (!session && page !== 'landing') {
       setPage('landing')
     }
@@ -36,11 +37,10 @@ export default function App() {
 
   const handleLogin = async () => {
     try {
-      // Stubbed signin logic. Will error if project isn't real, so fallback.
       if (session) return;
       await signIn('test@example.com', 'password123')
-      addToast(`Welcome back!`, 'success')
-      setPage('dashboard')
+      addToast(`Initiating Verification...`, 'info')
+      setPage('verification')
     } catch {
       addToast(`Error connecting to backend database.`, 'error')
     }
@@ -69,6 +69,7 @@ export default function App() {
 
       <main className="page">
         {page === 'landing'   && <Landing   {...sharedProps} onLogin={handleLogin} />}
+        {page === 'verification'&& <VerificationPage onVerified={() => setPage('dashboard')} addToast={addToast} />}
         {page === 'dashboard' && <Dashboard {...sharedProps} />}
         {page === 'map'       && <MapPage   {...sharedProps} />}
         {page === 'buddy'     && <BuddyPage {...sharedProps} />}

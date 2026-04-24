@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { mockApi } from '../lib/mockApi'
+import { db } from '../lib/database'
 import { Search, CheckCircle2, MapPin, Calendar, Star, Plane, MessageCircle, X, ShieldCheck } from 'lucide-react'
 
 const BUDDIES = [
@@ -53,13 +53,20 @@ export default function BuddyPage({ addToast }) {
   const [messages, setMessages] = useState([])
   const [newMsg, setNewMsg] = useState('')
 
-  // Sync with mockApi on chatOpen
+  // Sync with real db on chatOpen
   useEffect(() => {
     if (!chatOpen) return
-    mockApi.chat.getChatHistory(chatOpen.id).then(setMessages)
+    db.messages.getHistory().then(msgs => {
+      // Filter for this interaction naively
+      setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
+    })
     const timer = setInterval(async () => {
-      const msgs = await mockApi.chat.getChatHistory(chatOpen.id)
-      setMessages(msgs)
+      try {
+        const msgs = await db.messages.getHistory()
+        setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
+      } catch (e) {
+        // fail silently for polling
+      }
     }, 1500)
     return () => clearInterval(timer)
   }, [chatOpen])
@@ -73,8 +80,14 @@ export default function BuddyPage({ addToast }) {
     if (!newMsg.trim()) return
     const msgCopy = newMsg
     setNewMsg('')
-    const updated = await mockApi.chat.sendMessage(chatOpen.id, msgCopy)
-    setMessages(updated)
+    try {
+      await db.messages.send(msgCopy, chatOpen.id)
+      // refresh instantly
+      const msgs = await db.messages.getHistory()
+      setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
+    } catch {
+      addToast('Failed to send message. Are you logged in?', 'error')
+    }
   }
 
   const openChat = (buddy) => {

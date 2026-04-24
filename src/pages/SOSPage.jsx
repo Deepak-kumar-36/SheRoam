@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { mockApi } from '../lib/mockApi'
+import { db } from '../lib/database'
 import { ShieldAlert, CheckCircle2, Shield, Phone, Globe, Radio, User, MapPin } from 'lucide-react'
 
 const CONTACTS = [
@@ -34,10 +34,10 @@ export default function SOSPage({ addToast }) {
     setPhase('alerting')
     setAlertedCount(0)
     
-    await mockApi.sos.sendAlert(CONTACTS, (count, contact) => {
-      setAlertedCount(count)
-      addToast(`Alert sent to ${contact.name || 'contact'}`, 'error')
-    })
+    // Simulate real alert sending delay based on contacts
+    setAlertedCount(1)
+    await db.sos.sendAlert(CONTACTS)
+    setAlertedCount(CONTACTS.length)
     
     setPhase('sent')
   }
