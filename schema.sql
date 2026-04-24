@@ -90,3 +90,45 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- New Schema Additions for Production Features
+
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT false;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_seen TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS current_lat FLOAT8;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS current_lng FLOAT8;
+
+-- 5. Create EMERGENCY_LOGS table for S.O.S Tracking
+CREATE TABLE public.emergency_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  latitude FLOAT8,
+  longitude FLOAT8,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'safely_resolved', 'escalated')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.emergency_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can view emergency_logs" ON public.emergency_logs FOR SELECT USING (true);
+CREATE POLICY "Auth users can insert emergency_logs" ON public.emergency_logs FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Users can update own emergency logs" ON public.emergency_logs FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE TRIGGER update_emergency_modtime
+BEFORE UPDATE ON public.emergency_logs FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+
+-- 6. Create LOCATIONS table for Map Database
+CREATE TABLE public.locations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  type TEXT NOT NULL CHECK (type IN ('safe_zone', 'danger_zone', 'moderate_zone', 'shestay', 'sheguide')),
+  label TEXT NOT NULL,
+  latitude FLOAT8 NOT NULL,
+  longitude FLOAT8 NOT NULL,
+  score INT,
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.locations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can view locations" ON public.locations FOR SELECT USING (true);
+

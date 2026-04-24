@@ -83,6 +83,12 @@ export default function CommunityPage({ navigate, addToast, user }) {
       setPosts(INITIAL_POSTS)
       setLoading(false)
     })
+
+    const subscription = db.posts.subscribeToPosts((newPost) => {
+      setPosts(prev => [newPost, ...prev])
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   const categories = [

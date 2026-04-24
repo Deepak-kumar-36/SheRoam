@@ -48,6 +48,14 @@ export const db = {
       
       if (error) throw error
       return data
+    },
+    subscribeToPosts: (onPost) => {
+      return supabase
+        .channel('public:posts')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, payload => {
+          onPost(payload.new)
+        })
+        .subscribe()
     }
   },
   
@@ -80,17 +88,69 @@ export const db = {
         
       if (error) throw error
       return data
+    },
+    subscribeToChat: (onMessage) => {
+      return supabase
+        .channel('public:messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+          onMessage(payload.new)
+        })
+        .subscribe()
     }
   },
 
   sos: {
-    sendAlert: async () => {
+    sendAlert: async (lat, lng) => {
       const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
       
-      // We haven't created an emergency_logs table in schema but we can simulate the dispatch logic.
-      return new Promise((resolve) => {
-        setTimeout(() => resolve({ success: true, timestamp: Date.now() }), 1500)
-      })
+      const { data, error } = await supabase
+        .from('emergency_logs')
+        .insert([{
+          user_id: user.id,
+          latitude: lat,
+          longitude: lng,
+          status: 'active'
+        }])
+        .select()
+        .single()
+        
+      if (error) throw error
+      return data
+    },
+    cancelAlert: async (logId) => {
+      const { error } = await supabase
+        .from('emergency_logs')
+        .update({ status: 'safely_resolved' })
+        .eq('id', logId)
+      if (error) throw error
+    },
+    subscribeToEmergencies: (onEmergency) => {
+      return supabase
+        .channel('public:emergency_logs')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'emergency_logs' }, payload => {
+          if (payload.new.status === 'active') {
+            onEmergency(payload.new)
+          }
+        })
+        .subscribe()
+    }
+  },
+
+  users: {
+    verify: async () => {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) throw new Error('Not authenticated')
+
+      const { data, error } = await supabase
+        .from('users')
+        .update({ is_verified: true, updated_at: new Date().toISOString() })
+        .eq('id', user.id)
+        .select()
+        .single()
+      
+      if (error) throw error
+      return data
     }
   }
 }

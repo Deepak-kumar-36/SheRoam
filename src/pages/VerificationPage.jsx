@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ShieldCheck, VideoOff, RefreshCw } from 'lucide-react'
+import { db } from '../lib/database'
 
 export default function VerificationPage({ onVerified, addToast }) {
   const videoRef = useRef(null)
@@ -39,15 +40,20 @@ export default function VerificationPage({ onVerified, addToast }) {
     }
   }, []) // eslint-disable-line
 
-  const handleStartScan = () => {
+  const handleStartScan = async () => {
     setPhase('scanning')
     addToast('Initiating biometric analysis...', 'info')
     
-    // Simulate 4 second AI analysis
-    setTimeout(() => {
-      setPhase('success')
-      addToast('Identity Verified. Access Granted.', 'success')
+    try {
+      // Simulate analysis delay for UX
+      await new Promise(res => setTimeout(res, 3500))
       
+      // Real DB update
+      await db.users.verify()
+      
+      setPhase('success')
+        addToast('Identity Verified. Access Granted.', 'success')
+        
       // Stop stream to release camera light
       if (stream) {
         stream.getTracks().forEach(track => track.stop())
@@ -57,7 +63,12 @@ export default function VerificationPage({ onVerified, addToast }) {
       setTimeout(() => {
          onVerified()
       }, 1500)
-    }, 4000)
+    } catch (err) {
+      console.error('Verification failed', err)
+      setPhase('error')
+      setErrorDetails(err.message || 'Database connection lost.')
+      addToast('VERIFICATION FAILED: ' + (err.message || 'Database error'), 'error')
+    }
   }
 
   return (

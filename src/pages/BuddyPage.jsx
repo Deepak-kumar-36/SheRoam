@@ -47,27 +47,31 @@ const BUDDIES = [
   },
 ]
 
-export default function BuddyPage({ addToast }) {
+export default function BuddyPage({ addToast, user }) {
   const [search, setSearch] = useState('')
   const [chatOpen, setChatOpen] = useState(null)
   const [messages, setMessages] = useState([])
   const [newMsg, setNewMsg] = useState('')
 
-  // Sync with real db on chatOpen
   useEffect(() => {
     if (!chatOpen) return
+    
+    // Load initial history
     db.messages.getHistory().then(msgs => {
       setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
     })
-    const timer = setInterval(async () => {
-      try {
-        const msgs = await db.messages.getHistory()
-        setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
-      } catch (e) {
-        // fail silently for polling
+
+    // Subscribe to new messages
+    const subscription = db.messages.subscribeToChat((newMsg) => {
+      // Append only if it belongs to current chat
+      if (newMsg.receiver_id === chatOpen.id || newMsg.sender_id === chatOpen.id) {
+        setMessages(prev => [...prev, newMsg])
       }
-    }, 1500)
-    return () => clearInterval(timer)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [chatOpen])
 
   const filtered = BUDDIES.filter(b =>
@@ -234,20 +238,22 @@ export default function BuddyPage({ addToast }) {
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="label-caps" style={{ textAlign: 'center', opacity: 0.3, marginBottom: '16px' }}>END-TO-END ENCRYPTION ENABLED</div>
-              {messages.map(msg => (
-                <div key={msg.id} style={{ alignSelf: msg.sent ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+              {messages.map((msg, i) => {
+                const isSentByMe = typeof msg.sent !== 'undefined' ? msg.sent : (user && msg.sender_id === user.id);
+                return (
+                <div key={msg.id || i} style={{ alignSelf: isSentByMe ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
                   <div style={{ 
                     padding: '12px 16px', 
-                    background: msg.sent ? 'var(--s-primary)' : 'rgba(255,255,255,0.05)', 
-                    color: msg.sent ? '#000' : '#fff', 
-                    border: msg.sent ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    background: isSentByMe ? 'var(--s-primary)' : 'rgba(255,255,255,0.05)', 
+                    color: isSentByMe ? '#000' : '#fff', 
+                    border: isSentByMe ? 'none' : '1px solid rgba(255,255,255,0.1)',
                     fontFamily: 'Manrope',
                     fontSize: '0.875rem'
                   }}>
                     {msg.text.toUpperCase()}
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
 
             <div style={{ padding: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '16px' }}>

@@ -1,40 +1,32 @@
 import { useState, useEffect, useRef } from 'react'
 import { Map as MapIcon, Home, Compass, MapPin, Shield, AlertTriangle, X, ShieldAlert } from 'lucide-react'
 
-// ── Static Map Zone Data ──────────────────────────────────────────────────────
+import { MapContainer, TileLayer, Polygon, CircleMarker, Marker, Popup as LeafletPopup, Polyline } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+
+// ── Real Map Zone Data (Paris coordinates) ───────────────────────────────────
 const ZONES = [
-  { id: 'z1', label: 'LE MARAIS',    type: 'safe',    color: '#ceee93', opacity: 0.18, path: 'M 200,120 L 310,120 L 310,230 L 200,230 Z', cx: 255, cy: 175, score: 91 },
-  { id: 'z2', label: 'PIGALLE',      type: 'danger',  color: '#ff4a8d', opacity: 0.22, path: 'M 480,80  L 590,80  L 590,180 L 480,180 Z', cx: 535, cy: 130, score: 44 },
-  { id: 'z3', label: 'CHAMPS-ÉLYSÉES', type: 'moderate', color: '#f59e0b', opacity: 0.18, path: 'M 320,200 L 460,200 L 460,290 L 320,290 Z', cx: 390, cy: 245, score: 68 },
-  { id: 'z4', label: 'SAINT-GERMAIN', type: 'safe',   color: '#ceee93', opacity: 0.18, path: 'M 180,300 L 310,300 L 310,400 L 180,400 Z', cx: 245, cy: 350, score: 88 },
-  { id: 'z5', label: 'BANLIEUE NORD', type: 'danger', color: '#ff4a8d', opacity: 0.22, path: 'M 580,160 L 700,160 L 700,280 L 580,280 Z', cx: 640, cy: 220, score: 38 },
-  { id: 'z6', label: 'OPÉRA',        type: 'moderate', color: '#f59e0b', opacity: 0.18, path: 'M 340,110 L 470,110 L 470,195 L 340,195 Z', cx: 405, cy: 152, score: 72 },
-  { id: 'z7', label: 'MONTMARTRE',   type: 'safe',   color: '#ceee93', opacity: 0.18, path: 'M 460,40  L 570,40  L 570,130 L 460,130 Z', cx: 515, cy: 85,  score: 84 },
-  { id: 'z8', label: 'BELLEVILLE',   type: 'moderate', color: '#f59e0b', opacity: 0.18, path: 'M 600,80  L 720,80  L 720,165 L 600,165 Z', cx: 660, cy: 122, score: 61 },
+  { id: 'z1', label: 'LE MARAIS',    type: 'safe',    color: '#ceee93', positions: [[48.86, 2.35], [48.865, 2.35], [48.865, 2.36], [48.86, 2.36]], score: 91 },
+  { id: 'z2', label: 'PIGALLE',      type: 'danger',  color: '#ff4a8d', positions: [[48.88, 2.33], [48.885, 2.33], [48.885, 2.34], [48.88, 2.34]], score: 44 },
+  { id: 'z3', label: 'CHAMPS-ÉLYSÉES', type: 'moderate', color: '#f59e0b', positions: [[48.87, 2.30], [48.875, 2.30], [48.875, 2.31], [48.87, 2.31]], score: 68 },
+  { id: 'z4', label: 'SAINT-GERMAIN', type: 'safe',   color: '#ceee93', positions: [[48.85, 2.33], [48.855, 2.33], [48.855, 2.34], [48.85, 2.34]], score: 88 }
 ]
 
 const SHESTAYS = [
-  { id: 's1', label: 'HOTEL BELLA',  x: 260, y: 160, score: 9.4, type: 'SheStay' },
-  { id: 's2', label: 'HOSTEL LUNA',  x: 240, y: 340, score: 9.1, type: 'SheStay' },
-  { id: 's3', label: 'VILLA AMARA',  x: 510, y: 75,  score: 9.7, type: 'SheStay' },
+  { id: 's1', label: 'HOTEL BELLA',  lat: 48.863, lng: 2.355, score: 9.4, type: 'SheStay' },
+  { id: 's2', label: 'HOSTEL LUNA',  lat: 48.852, lng: 2.335, score: 9.1, type: 'SheStay' },
 ]
 
 const SHEGUIDES = [
-  { id: 'g1', label: 'AMARA K.', x: 390, y: 270, type: 'SheGuide', lang: 'FR/EN' },
-  { id: 'g2', label: 'LÉA P.',   x: 400, y: 140, type: 'SheGuide', lang: 'FR/DE' },
+  { id: 'g1', label: 'AMARA K.', lat: 48.868, lng: 2.345, type: 'SheGuide', lang: 'FR/EN' }
 ]
 
 // Route point pairs (from → to)
 const ROUTE_SEGMENTS = [
-  { x1: 260, y1: 160, x2: 390, y2: 245, type: 'safe' },
-  { x1: 390, y1: 245, x2: 536, y2: 130, type: 'danger' },
-  { x1: 536, y1: 130, x2: 510, y2: 75,  type: 'safe' },
-  // safe detour
-  { x1: 390, y1: 245, x2: 405, y2: 152, type: 'moderate' },
-  { x1: 405, y1: 152, x2: 510, y2: 75,  type: 'safe' },
+  { positions: [[48.863, 2.355], [48.875, 2.31]], type: 'safe' }
 ]
 
-const USER_POS = { x: 260, y: 160 }
+const USER_POS = [48.863, 2.355]
 
 const ZONE_TYPE_LABELS = {
   safe: 'SAFE',
@@ -53,8 +45,19 @@ export default function MapPage({ navigate, addToast }) {
   const [showUser, setShowUser] = useState(true)
   const [aiComplete, setAiComplete] = useState(false)
   const [aiAnalyzing, setAiAnalyzing] = useState(false)
+  const [userPos, setUserPos] = useState(USER_POS)
   const [popup, setPopup] = useState(null)
   const routeAnimRef = useRef(null)
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        pos => setUserPos([pos.coords.latitude, pos.coords.longitude]),
+        err => console.error("GPS error:", err)
+      )
+      return () => navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
 
   const checkRouteSafety = () => {
     setAiAnalyzing(true)
@@ -152,78 +155,87 @@ export default function MapPage({ navigate, addToast }) {
       <div style={{ display: 'flex', flex: 1, padding: '24px', gap: '24px', minHeight: 0 }}>
         {/* Canvas SVG Map */}
         <div className="glass-panel" style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-          <svg viewBox="0 0 900 540" width="100%" height="100%" style={{ display: 'block' }}>
-            <rect width="900" height="540" fill="#000000"/>
-            {/* Grid */}
-            <defs>
-              <pattern id="gridMap" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>
-              </pattern>
-            </defs>
-            <rect width="900" height="540" fill="url(#gridMap)"/>
-
-            <text x="20" y="520" fill="rgba(255,255,255,0.3)" fontSize="10" fontFamily="Space Grotesk" style={{ letterSpacing: '0.2em' }}>PARIS · TERMINAL MAP</text>
-
+          <MapContainer center={userPos} zoom={13} style={{ width: '100%', height: '100%', background: '#000' }} zoomControl={false}>
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; CARTO'
+            />
             {/* Zones */}
             {showZones && ZONES.map(z => (
-              <g key={z.id} onClick={e => handleZoneClick(z, e)} style={{ cursor: 'pointer' }}>
-                <path d={z.path} fill={z.color} fillOpacity={z.opacity} stroke={z.color} strokeOpacity={0.4} strokeWidth="1"/>
-                <text x={z.cx} y={z.cy - 6} textAnchor="middle" fill={z.color} fontSize="10" fontFamily="Space Grotesk" style={{ letterSpacing: '0.1em' }}>{z.label}</text>
-                <text x={z.cx} y={z.cy + 10} textAnchor="middle" fill={z.color} fontSize="8" fontFamily="Space Grotesk" fillOpacity={0.8}>{z.score}/100</text>
-              </g>
+              <Polygon 
+                key={z.id} 
+                positions={z.positions} 
+                pathOptions={{ fillColor: z.color, fillOpacity: z.opacity || 0.2, color: z.color, weight: 1, opacity: 0.5 }}
+                eventHandlers={{
+                  click: () => {
+                    setPopup({
+                      label: z.label,
+                      info: `${ZONE_TYPE_LABELS[z.type]} — SAFETY SCORE: ${z.score}/100`,
+                      latlng: z.positions[0]
+                    })
+                    setTimeout(() => setPopup(null), 3000)
+                  }
+                }}
+              />
             ))}
 
             {/* Route Lines */}
             {showRoute && ROUTE_SEGMENTS.map((seg, i) => (
-              <line key={i} x1={seg.x1} y1={seg.y1} x2={seg.x2} y2={seg.y2} stroke={seg.type === 'safe' ? '#ceee93' : seg.type === 'danger' ? '#ff4a8d' : '#f59e0b'} strokeWidth="2" strokeDasharray={seg.type === 'safe' ? "4 4" : "none"} />
+              <Polyline
+                key={i}
+                positions={seg.positions}
+                pathOptions={{ color: seg.type === 'safe' ? '#ceee93' : seg.type === 'danger' ? '#ff4a8d' : '#f59e0b', weight: 4, dashArray: seg.type === 'safe' ? "4 4" : "none" }}
+              />
             ))}
-
-            {showRoute && (
-              <>
-                <circle cx={260} cy={160} r={6} fill="var(--s-primary)" />
-                <circle cx={510} cy={75}  r={6} fill="#ceee93" />
-                <text x={270} y={157} fill="var(--s-primary)" fontSize="8" fontFamily="Space Grotesk">START</text>
-                <text x={520} y={72}  fill="#ceee93" fontSize="8" fontFamily="Space Grotesk">END</text>
-              </>
-            )}
+            {showRoute && ROUTE_SEGMENTS.map((seg, i) => (
+              <CircleMarker key={'start-'+i} center={seg.positions[0]} pathOptions={{ color: 'var(--s-primary)' }} radius={4} />
+            ))}
 
             {/* Stays */}
             {showStays && SHESTAYS.map(m => (
-              <g key={m.id} style={{ cursor: 'pointer' }} onClick={() => addToast(`${m.label} — SheStay Verified (${m.score})`, 'success')}>
-                <rect x={m.x-10} y={m.y-10} width="20" height="20" fill="rgba(206,238,147,0.1)" stroke="#ceee93" strokeWidth="1"/>
-                <text x={m.x} y={m.y + 22} textAnchor="middle" fill="#ceee93" fontSize="8" fontFamily="Space Grotesk" letterSpacing="0.1em">{m.label}</text>
-              </g>
+              <CircleMarker 
+                key={m.id} 
+                center={[m.lat, m.lng]} 
+                radius={6} 
+                pathOptions={{ color: '#ceee93', fillColor: 'rgba(206,238,147,0.2)', fillOpacity: 1 }}
+                eventHandlers={{
+                  click: () => addToast(`${m.label} — SheStay Verified (${m.score})`, 'success')
+                }}
+              />
             ))}
 
             {/* Guides */}
             {showGuides && SHEGUIDES.map(m => (
-              <g key={m.id} style={{ cursor: 'pointer' }} onClick={() => addToast(`${m.label} — SheGuide (${m.lang})`, 'info')}>
-                <circle cx={m.x} cy={m.y} r={10} fill="rgba(255,255,255,0.1)" stroke="#fff" strokeWidth="1"/>
-                <text x={m.x} y={m.y + 22} textAnchor="middle" fill="#fff" fontSize="8" fontFamily="Space Grotesk" letterSpacing="0.1em">{m.label}</text>
-              </g>
+              <CircleMarker 
+                key={m.id} 
+                center={[m.lat, m.lng]} 
+                radius={6} 
+                pathOptions={{ color: '#fff', fillColor: 'rgba(255,255,255,0.2)', fillOpacity: 1 }}
+                eventHandlers={{
+                  click: () => addToast(`${m.label} — SheGuide (${m.lang})`, 'info')
+                }}
+              />
             ))}
 
-            {/* Location */}
+            {/* Location (User) */}
             {showUser && (
-              <g>
-                <circle cx={USER_POS.x} cy={USER_POS.y} r={24} fill="rgba(206,238,147,0.1)">
-                  <animate attributeName="r" values="20;30;20" dur="2s" repeatCount="indefinite"/>
-                  <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite"/>
-                </circle>
-                <circle cx={USER_POS.x} cy={USER_POS.y} r={6} fill="var(--s-primary)" />
-                <rect x={USER_POS.x - 38} y={USER_POS.y - 30} width={76} height={16} fill="#000" stroke="var(--s-primary)" strokeWidth="1"/>
-                <text x={USER_POS.x} y={USER_POS.y - 19} textAnchor="middle" fill="var(--s-primary)" fontSize="8" fontFamily="Space Grotesk">YOU ARE HERE</text>
-              </g>
+              <CircleMarker 
+                center={userPos} 
+                radius={8} 
+                pathOptions={{ color: 'var(--s-primary)', weight: 2, fillOpacity: 0.8 }}
+              />
             )}
-          </svg>
 
-          {/* Zone popup */}
-          {popup && (
-            <div className="glass-panel" style={{ position: 'absolute', left: popup.x + 12, top: popup.y + 12, padding: '12px', zIndex: 10 }}>
-              <div className="label-caps">{popup.label}</div>
-              <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{popup.info}</div>
-            </div>
-          )}
+            {/* Zone Popup */}
+            {popup && (
+              <LeafletPopup position={popup.latlng} closeButton={false}>
+                <div style={{ padding: '8px', background: '#111', color: '#fff', border: '1px solid #333' }}>
+                  <div className="label-caps">{popup.label}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{popup.info}</div>
+                </div>
+              </LeafletPopup>
+            )}
+          </MapContainer>
         </div>
 
         {/* Sidebar */}

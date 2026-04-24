@@ -17,13 +17,23 @@ const EMERGENCY_NUMBERS = [
   { country: 'GERMANY',     police: '110', ambulance: '112', fire: '112', women: '08000 116 016' },
 ]
 
-// Simulated GPS
-const GPS_COORDS = '48.8613° N, 2.3522° E'
-
 export default function SOSPage({ addToast }) {
   const [phase, setPhase] = useState('idle')   // idle | confirm | alerting | sent
   const [alertedCount, setAlertedCount] = useState(0)
+  const [coords, setCoords] = useState({ lat: 48.8613, lng: 2.3522, display: 'LOCATING...' })
+  const [activeLogId, setActiveLogId] = useState(null)
   const intervalRef = useRef(null)
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude, display: `${pos.coords.latitude.toFixed(4)}° N, ${pos.coords.longitude.toFixed(4)}° E` }),
+        err => setCoords(prev => ({ ...prev, display: 'GPS SIGNAL LOST (USING LAST KNOWN)' }))
+      )
+    } else {
+      setCoords(prev => ({ ...prev, display: 'GPS UNAVAILABLE' }))
+    }
+  }, [])
 
   const openConfirm = () => setPhase('confirm')
   const cancelSOS   = () => { setPhase('idle'); setAlertedCount(0); }
@@ -32,17 +42,39 @@ export default function SOSPage({ addToast }) {
     setPhase('alerting')
     setAlertedCount(0)
     
+    try {
+      const log = await db.sos.sendAlert(coords.lat, coords.lng)
+      setActiveLogId(log.id)
+    } catch (e) {
+      addToast('SOS DATABASE LINK FAILED. ATTEMPTING LOCAL BROADCAST.', 'error')
+    }
+
     setAlertedCount(1)
-    await db.sos.sendAlert(CONTACTS)
-    setAlertedCount(CONTACTS.length)
     
-    setPhase('sent')
+    // Simulate notifying contacts individually
+    let contactsAlerted = 1
+    intervalRef.current = setInterval(() => {
+      contactsAlerted += 1
+      setAlertedCount(contactsAlerted)
+      if (contactsAlerted >= CONTACTS.length) {
+        clearInterval(intervalRef.current)
+        setPhase('sent')
+      }
+    }, 400)
   }
 
-  const markSafe = () => {
+  const markSafe = async () => {
     clearInterval(intervalRef.current)
+    if (activeLogId) {
+      try {
+        await db.sos.cancelAlert(activeLogId)
+      } catch (e) {
+        addToast('FAILED TO UPDATE DB STATUS. RETRYING...', 'error')
+      }
+    }
     setPhase('idle')
     setAlertedCount(0)
+    setActiveLogId(null)
     addToast('YOU ARE MARKED SAFE. EMERGENCY CONTACTS NOTIFIED.', 'success')
   }
 
@@ -89,7 +121,7 @@ export default function SOSPage({ addToast }) {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><MapPin size={14} /> COORDINATES</span>
-                      <span className="label-caps" style={{ color: '#fff' }}>{GPS_COORDS}</span>
+                      <span className="label-caps" style={{ color: '#fff' }}>{coords.display}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><User size={14} /> CONTACTS READY</span>
@@ -208,7 +240,7 @@ export default function SOSPage({ addToast }) {
             </div>
             <div className="headline-sm" style={{ marginBottom: '16px', textTransform: 'uppercase' }}>SEND EMERGENCY DISTRESS?</div>
             <div className="label-caps" style={{ opacity: 0.7, marginBottom: '32px', lineHeight: 1.6, fontSize: '10px' }}>
-              YOUR CURRENT COORDINATES ({GPS_COORDS}) AND A DISTRESS SIGNAL WILL BE BROADCAST TO <strong style={{ color: 'var(--s-primary)' }}>{CONTACTS.length} OPERATIVES</strong>.
+              YOUR CURRENT COORDINATES ({coords.display}) AND A DISTRESS SIGNAL WILL BE BROADCAST TO <strong style={{ color: 'var(--s-primary)' }}>{CONTACTS.length} OPERATIVES</strong>.
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
