@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ShieldCheck, VideoOff, Camera, RefreshCw, ExternalLink } from 'lucide-react'
+import { ShieldCheck, VideoOff, RefreshCw } from 'lucide-react'
 
 export default function VerificationPage({ onVerified, addToast }) {
   const videoRef = useRef(null)
@@ -23,7 +23,7 @@ export default function VerificationPage({ onVerified, addToast }) {
       } catch (err) {
         setPhase('error')
         setErrorDetails(err.message || 'Camera permission denied.')
-        addToast('We need camera access to verify your identity.', 'error')
+        addToast('Camera access required for secure verification.', 'error')
       }
     }
 
@@ -41,12 +41,12 @@ export default function VerificationPage({ onVerified, addToast }) {
 
   const handleStartScan = () => {
     setPhase('scanning')
-    addToast('Analyzing facial features...', 'info')
+    addToast('Initiating biometric analysis...', 'info')
     
     // Simulate 4 second AI analysis
     setTimeout(() => {
       setPhase('success')
-      addToast('Identity Verified! Matches female biometrics.', 'success')
+      addToast('Identity Verified. Access Granted.', 'success')
       
       // Stop stream to release camera light
       if (stream) {
@@ -61,84 +61,88 @@ export default function VerificationPage({ onVerified, addToast }) {
   }
 
   return (
-    <div className="verification-page">
-      <div className="verification-header">
-        <div className="brand">SheRoam</div>
-        <h2>Identity Verification</h2>
-        <p>To keep our community completely safe and authentic, we require a quick biometric check.</p>
-      </div>
+    <div className="page flex-center" style={{ minHeight: '100vh', flexDirection: 'column' }}>
+      <div className="container" style={{ maxWidth: '600px', width: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div className="label-caps" style={{ color: 'var(--s-primary)' }}>SECURITY CLEARANCE</div>
+          <h2 className="headline-md" style={{ textTransform: 'uppercase', marginTop: '8px' }}>BIOMETRIC VERIFICATION</h2>
+        </div>
 
-      <div className="verification-container">
-        {phase === 'error' ? (
-          <div className="video-error">
-            <VideoOff size={48} color="var(--color-text-muted)" />
-            <h3>Camera Access Required</h3>
-            <p>{errorDetails}</p>
-            <p style={{fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '8px'}}>
-              SheRoam relies on a strict verification process. Please allow camera permissions in your browser.
-            </p>
-            <button className="btn btn-primary" onClick={() => window.location.reload()} style={{marginTop: '24px'}}>
-              <RefreshCw size={18} /> Retry
-            </button>
-          </div>
-        ) : (
-          <div className={`video-wrapper ${phase === 'scanning' ? 'scanning' : ''} ${phase === 'success' ? 'success' : ''}`}>
-            {/* The oval mask for the video feed */}
-            <div className="video-mask">
-              <video 
-                ref={videoRef} 
-                autoPlay 
-                playsInline 
-                muted
-                className="live-video"
-              />
+        <div className="glass-panel" style={{ padding: '24px' }}>
+          {phase === 'error' ? (
+            <div className="flex-center" style={{ flexDirection: 'column', gap: '16px', padding: '48px 0', textAlign: 'center' }}>
+              <VideoOff size={48} color="var(--s-tertiary)" />
+              <h3 className="label-caps" style={{ color: 'var(--s-tertiary)' }}>ACCESS DENIED: NO CAMERA DETECTED</h3>
+              <p style={{ fontSize: '0.875rem' }}>{errorDetails}</p>
+              <button className="btn btn-secondary" onClick={() => window.location.reload()} style={{ marginTop: '24px' }}>
+                <RefreshCw size={16} /> REBOOT SENSOR
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {/* Scanning laser UI */}
-              {phase === 'scanning' && (
-                <>
-                  <div className="scanning-laser"></div>
-                  <div className="scanning-overlay"></div>
-                </>
-              )}
+              {/* Boxy Camera UI matching Spade */}
+              <div className="camera-wrapper">
+                <video 
+                  ref={videoRef} 
+                  autoPlay 
+                  playsInline 
+                  muted
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                
+                {/* Crosshairs overlay */}
+                <div className="camera-overlay">
+                  <div className="camera-crosshair crosshair-tl"></div>
+                  <div className="camera-crosshair crosshair-tr"></div>
+                  <div className="camera-crosshair crosshair-bl"></div>
+                  <div className="camera-crosshair crosshair-br"></div>
+                </div>
+                
+                {/* Scanning laser UI */}
+                {phase === 'scanning' && (
+                  <div className="laser-scan laser-scanning"></div>
+                )}
 
-              {/* Success UI */}
-              {phase === 'success' && (
-                <div className="success-overlay">
-                  <ShieldCheck size={64} color="#4ade80" />
-                  <div style={{fontWeight: 600, marginTop: '8px', color: '#fff'}}>Verified</div>
+                {/* Success UI */}
+                {phase === 'success' && (
+                  <div className="flex-center" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', flexDirection: 'column', zIndex: 20 }}>
+                    <ShieldCheck size={64} color="var(--s-primary)" />
+                    <div className="label-caps" style={{ marginTop: '16px', color: 'var(--s-primary)' }}>VERIFIED</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Status indicators */}
+              <div className="verification-status">
+                {phase === 'ready' && 'ALIGN FACE IN CROSSHAIRS'}
+                {phase === 'scanning' && 'Hold still. Analyzing metrics...'}
+                {phase === 'success' && 'Scan complete. Encrypting data...'}
+                {phase === 'requesting' && 'Connecting to secure stream...'}
+              </div>
+
+              {phase === 'ready' && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                  <button className="btn btn-primary btn-large neon-glow" onClick={handleStartScan} style={{ width: '100%' }}>
+                    INITIATE SCAN
+                  </button>
+                  <p className="label-caps" style={{ opacity: 0.5 }}>
+                    LOCAL PROCESSING. 0% DATA RETENTION.
+                  </p>
+                </div>
+              )}
+              
+              {phase === 'scanning' && (
+                <div style={{ textAlign: 'center' }}>
+                  <div className="label-caps animate-pulse" style={{ color: 'var(--s-primary)' }}>
+                    PROCESSING MATRICES...
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Status indicators */}
-            <div className="camera-status">
-              {phase === 'ready' && 'Position your face fully within the oval.'}
-              {phase === 'scanning' && 'Hold still. Analyzing metrics...'}
-              {phase === 'success' && 'Scan complete. Encrypting data...'}
-              {phase === 'requesting' && 'Connecting to secure stream...'}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-
-      {phase === 'ready' && (
-        <div className="verification-actions">
-           <button className="btn btn-primary btn-pulse" onClick={handleStartScan} style={{width: '100%', maxWidth: '300px'}}>
-             <Camera size={20} /> Start Biometric Scan
-           </button>
-           <p className="privacy-notice">
-             <ShieldCheck size={14} /> Images are processed locally on your device and never stored.
-           </p>
-        </div>
-      )}
-      
-      {phase === 'scanning' && (
-        <div className="verification-actions">
-           <div className="ai-processing-badging">
-              <span className="spinner"></span> Processing with SheRoam AI...
-           </div>
-        </div>
-      )}
     </div>
   )
 }

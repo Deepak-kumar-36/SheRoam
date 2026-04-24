@@ -4,45 +4,45 @@ import { Search, CheckCircle2, MapPin, Calendar, Star, Plane, MessageCircle, X, 
 
 const BUDDIES = [
   {
-    id: 1, name: 'Amara Kone', from: 'Accra, Ghana', initials: 'AK', color: '#7C3AED',
+    id: 1, name: 'Amara Kone', from: 'Accra, Ghana', initials: 'AK', color: '#ceee93',
     city: 'Paris', dates: 'Apr 24 – May 2', verified: true,
-    interests: ['Art Museums', 'Cafés', 'Solo Hiking'],
-    bio: 'Solo traveler for 4 years. Love connecting with local culture and off-the-beaten-path spots.',
+    interests: ['ART MUSEUMS', 'CAFÉS', 'SOLO HIKING'],
+    bio: 'SOLO TRAVELER FOR 4 YEARS. LOVE CONNECTING WITH LOCAL CULTURE AND OFF-THE-BEATEN-PATH SPOTS.',
     rating: 4.9, trips: 23, online: true,
   },
   {
-    id: 2, name: 'Lisa Hofmann', from: 'Vienna, Austria', initials: 'LH', color: '#EC4899',
+    id: 2, name: 'Lisa Hofmann', from: 'Vienna, Austria', initials: 'LH', color: '#f59e0b',
     city: 'Paris', dates: 'Apr 25 – Apr 30', verified: true,
-    interests: ['Foodie', 'Architecture', 'Photography'],
-    bio: 'Digital nomad based in EU. Here for a work conference + exploration. Looking for dinner company!',
+    interests: ['FOODIE', 'ARCHITECTURE', 'PHOTOGRAPHY'],
+    bio: 'DIGITAL NOMAD BASED IN EU. HERE FOR A WORK CONFERENCE + EXPLORATION. LOOKING FOR DINNER COMPANY.',
     rating: 5.0, trips: 11, online: true,
   },
   {
-    id: 3, name: 'Nour Al-Rashid', from: 'Dubai, UAE', initials: 'NA', color: '#10B981',
+    id: 3, name: 'Nour Al-Rashid', from: 'Dubai, UAE', initials: 'NA', color: '#ff4a8d',
     city: 'Paris', dates: 'Apr 23 – Apr 26', verified: false,
-    interests: ['Shopping', 'Fashion', 'History'],
-    bio: 'First solo trip! Excited but a bit nervous. Would love a buddy for day trips around the city.',
+    interests: ['SHOPPING', 'FASHION', 'HISTORY'],
+    bio: 'FIRST SOLO TRIP. EXCITED BUT A BIT NERVOUS. WOULD LOVE A BUDDY FOR DAY TRIPS AROUND THE CITY.',
     rating: null, trips: 1, online: true,
   },
   {
-    id: 4, name: 'Yuki Tanaka', from: 'Osaka, Japan', initials: 'YT', color: '#F59E0B',
+    id: 4, name: 'Yuki Tanaka', from: 'Osaka, Japan', initials: 'YT', color: '#ceee93',
     city: 'Paris', dates: 'Apr 28 – May 5', verified: true,
-    interests: ['Bakeries', 'Metro Exploring', 'Bookshops'],
-    bio: 'Slow traveler who loves spending days in local neighborhoods. Always up for a coffee date.',
+    interests: ['BAKERIES', 'METRO EXPLORING', 'BOOKSHOPS'],
+    bio: 'SLOW TRAVELER WHO LOVES SPENDING DAYS IN LOCAL NEIGHBORHOODS. ALWAYS UP FOR A COFFEE DATE.',
     rating: 4.8, trips: 7, online: false,
   },
   {
-    id: 5, name: 'Sofia Mendez', from: 'Mexico City, MX', initials: 'SM', color: '#6366F1',
+    id: 5, name: 'Sofia Mendez', from: 'Mexico City, MX', initials: 'SM', color: '#f59e0b',
     city: 'Paris', dates: 'May 1 – May 8', verified: true,
-    interests: ['Dancing', 'Street Food', 'Nightlife'],
-    bio: 'Travel writer covering Latin women abroad. Love making friends from all over the world.',
+    interests: ['DANCING', 'STREET FOOD', 'NIGHTLIFE'],
+    bio: 'TRAVEL WRITER COVERING LATIN WOMEN ABROAD. LOVE MAKING FRIENDS FROM ALL OVER THE WORLD.',
     rating: 4.7, trips: 34, online: false,
   },
   {
-    id: 6, name: 'Fatima Malik', from: 'Lahore, Pakistan', initials: 'FM', color: '#EF4444',
+    id: 6, name: 'Fatima Malik', from: 'Lahore, Pakistan', initials: 'FM', color: '#ceee93',
     city: 'Paris', dates: 'Apr 23 – Apr 29', verified: true,
-    interests: ['Halal Food', 'Mosques', 'Gardens'],
-    bio: 'Medical student on holiday. Looking for a peaceful companion for museum and garden days.',
+    interests: ['HALAL FOOD', 'MOSQUES', 'GARDENS'],
+    bio: 'MEDICAL STUDENT ON HOLIDAY. LOOKING FOR A PEACEFUL COMPANION FOR MUSEUM AND GARDEN DAYS.',
     rating: 4.9, trips: 5, online: true,
   },
 ]
@@ -57,7 +57,6 @@ export default function BuddyPage({ addToast }) {
   useEffect(() => {
     if (!chatOpen) return
     db.messages.getHistory().then(msgs => {
-      // Filter for this interaction naively
       setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
     })
     const timer = setInterval(async () => {
@@ -82,120 +81,117 @@ export default function BuddyPage({ addToast }) {
     setNewMsg('')
     try {
       await db.messages.send(msgCopy, chatOpen.id)
-      // refresh instantly
       const msgs = await db.messages.getHistory()
       setMessages(msgs.filter(m => m.receiver_id === chatOpen.id || m.sender_id === chatOpen.id))
     } catch {
-      addToast('Failed to send message. Are you logged in?', 'error')
+      addToast('FAILED TO SEND MESSAGE. ARE YOU LOGGED IN?', 'error')
     }
   }
 
   const openChat = (buddy) => {
     setChatOpen(buddy)
-    addToast(`Chat opened with ${buddy.name}`, 'info')
+    addToast(`COMMUNICATION LINK OPENED: ${buddy.name.toUpperCase()}`, 'info')
   }
 
   return (
-    <div className="buddy-page">
+    <div className="page">
       <div className="container">
-        <div className="page-header">
-          <div className="section-label">BUDDY FINDER</div>
-          <h1 className="page-title">Find your <span className="gradient-text">travel companion</span></h1>
-          <p className="page-subtitle">Connect with verified solo women travelers in your city & dates</p>
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '32px', marginBottom: '48px' }}>
+          <div className="label-caps" style={{ color: 'var(--s-primary)', marginBottom: '8px' }}>NETWORK PROTOCOL</div>
+          <h1 className="headline-lg" style={{ textTransform: 'uppercase' }}>BUDDY FINDER</h1>
+          <p className="label-caps" style={{ opacity: 0.5, marginTop: '8px' }}>CONNECT WITH VERIFIED OPERATIVES IN YOUR SECTOR</p>
         </div>
 
         {/* Search + Filters */}
-        <div className="buddy-search-bar">
-          <div className="search-input-wrapper" style={{ maxWidth: '400px' }}>
-            <span className="search-icon"><Search size={16} /></span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: '48px', alignItems: 'center' }}>
+          <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', flex: '1 1 300px' }}>
+            <Search size={16} color="rgba(255,255,255,0.5)" style={{ marginRight: '12px' }} />
             <input
               type="text"
-              placeholder="Search by name or interest..."
+              placeholder="SEARCH ALIAS OR INTEL..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              id="buddy-search-input"
+              style={{ background: 'transparent', border: 'none', color: '#fff', width: '100%', outline: 'none', fontFamily: 'Space Grotesk', letterSpacing: '0.1em', fontSize: '0.875rem', textTransform: 'uppercase' }}
             />
           </div>
-          <button className="btn btn-secondary" id="filter-verified-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <CheckCircle2 size={14} color="#22c55e" /> Verified Only
+          <button className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 20px' }}>
+            <CheckCircle2 size={16} color="var(--s-primary)" /> <span className="label-caps">VERIFIED ONLY</span>
           </button>
-          <button className="btn btn-secondary" id="filter-online-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div className="online-dot" style={{ position: 'static' }}></div> Online Now
+          <button className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 20px' }}>
+            <div style={{ width: 8, height: 8, background: 'var(--s-primary)', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></div> <span className="label-caps">ONLINE NOW</span>
           </button>
-          <button className="btn btn-secondary" id="filter-dates-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Calendar size={14} /> Same Dates
+          <button className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '14px 20px' }}>
+            <Calendar size={16} /> <span className="label-caps">SAME DATES</span>
           </button>
-          <div style={{ marginLeft: 'auto', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-            {filtered.length} travelers found in Paris
+          <div className="label-caps" style={{ marginLeft: 'auto', opacity: 0.5 }}>
+            {filtered.length} OPERATIVES FOUND
           </div>
         </div>
 
         {/* Cards */}
-        <div className="buddy-cards-grid">
+        <div className="grid-3">
           {filtered.map(buddy => (
-            <div key={buddy.id} className="buddy-card">
+            <div key={buddy.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', borderTop: `2px solid ${buddy.color}` }}>
               {/* Card top */}
-              <div className="buddy-card-top">
-                <div
-                  className="buddy-avatar"
-                  style={{ background: `linear-gradient(135deg, ${buddy.color}, ${buddy.color}88)`, fontSize: '1.2rem', color: '#fff', fontWeight: 'bold' }}
-                >
-                  {buddy.initials}
-                  {buddy.online && <div className="online-dot"></div>}
+              <div style={{ padding: '24px', flex: 1 }}>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <div
+                    style={{ width: '48px', height: '48px', border: `1px solid ${buddy.color}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: buddy.color, fontFamily: 'Space Grotesk', fontWeight: 700, position: 'relative' }}
+                  >
+                    {buddy.initials}
+                    {buddy.online && <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '8px', height: '8px', background: 'var(--s-primary)', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></div>}
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="label-caps" style={{ color: '#fff' }}>{buddy.name.toUpperCase()}</div>
+                      {buddy.verified && <ShieldCheck size={16} color="var(--s-primary)" />}
+                    </div>
+                    <div className="label-caps" style={{ opacity: 0.5, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={12} /> {buddy.from.toUpperCase()}
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '10px', textTransform: 'uppercase', fontFamily: 'Space Grotesk', letterSpacing: '0.1em', marginTop: '8px', color: buddy.color }}>
+                      {buddy.rating && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Star size={10} fill="currentColor" /> {buddy.rating}</span>}
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Plane size={10} /> {buddy.trips} TRIPS</span>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div className="buddy-name">{buddy.name}</div>
-                    {buddy.verified && (
-                      <span title="Identity Verified" style={{ display: 'flex' }}><ShieldCheck size={16} color="#4ade80" /></span>
-                    )}
-                  </div>
-                  <div className="buddy-origin" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <MapPin size={12} /> {buddy.from}
-                  </div>
-                  <div style={{ display: 'flex', gap: '10px', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                    {buddy.rating && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Star size={12} fill="currentColor" color="var(--s-primary)" /> {buddy.rating}</span>}
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Plane size={12} /> {buddy.trips} trips</span>
-                  </div>
+
+                {/* Trip Info */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '12px 0', marginBottom: '24px' }}>
+                  <span className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={14} color="var(--s-primary)" /> {buddy.city.toUpperCase()}</span>
+                  <span className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={14} color="var(--s-primary)" /> {buddy.dates.toUpperCase()}</span>
                 </div>
-              </div>
 
-              {/* Trip Info */}
-              <div className="buddy-trip-info">
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={14} /> {buddy.city}</span>
-                <span>·</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={14} /> {buddy.dates}</span>
-              </div>
+                {/* Bio */}
+                <p className="label-caps" style={{ opacity: 0.7, lineHeight: 1.6, marginBottom: '24px', fontSize: '10px' }}>
+                  {buddy.bio}
+                </p>
 
-              {/* Bio */}
-              <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', lineHeight: 1.6, marginBottom: '12px' }}>
-                {buddy.bio}
-              </p>
-
-              {/* Interests */}
-              <div className="buddy-interests">
-                {buddy.interests.map(i => (
-                  <span key={i} className="interest-tag">{i}</span>
-                ))}
+                {/* Interests */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {buddy.interests.map(i => (
+                    <span key={i} style={{ padding: '6px 12px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '9px', fontFamily: 'Space Grotesk', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.8)' }}>
+                      {i}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="buddy-actions">
+              <div style={{ display: 'flex', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <button
-                  className="btn btn-primary"
-                  style={{ flex: 1, padding: '9px 14px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                  id={`chat-buddy-${buddy.id}`}
+                  className="btn btn-secondary"
+                  style={{ flex: 1, border: 'none', borderRight: '1px solid rgba(255,255,255,0.1)', borderRadius: 0, padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   onClick={() => openChat(buddy)}
                 >
-                  <MessageCircle size={16} /> Chat
+                  <MessageCircle size={16} /> <span className="label-caps">INITIATE CHAT</span>
                 </button>
                 <button
                   className="btn btn-secondary"
-                  style={{ padding: '9px 14px', fontSize: '0.85rem' }}
-                  id={`view-buddy-${buddy.id}`}
-                  onClick={() => addToast(`Viewing ${buddy.name}'s full profile`, 'info')}
+                  style={{ flex: 1, border: 'none', borderRadius: 0, padding: '16px' }}
+                  onClick={() => addToast(`VIEWING INTEL: ${buddy.name.toUpperCase()}`, 'info')}
                 >
-                  View Profile
+                  <span className="label-caps">VIEW INTEL</span>
                 </button>
               </div>
             </div>
@@ -203,70 +199,71 @@ export default function BuddyPage({ addToast }) {
         </div>
 
         {filtered.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px', color: 'var(--color-text-muted)' }}>
-            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-              <Search size={48} color="var(--color-border)" />
-            </div>
-            <div style={{ fontWeight: 600 }}>No buddies found</div>
-            <div style={{ fontSize: '0.9rem', marginTop: '8px' }}>Try different search terms</div>
+          <div className="glass-panel flex-center" style={{ padding: '64px', flexDirection: 'column', gap: '16px' }}>
+            <Search size={48} color="rgba(255,255,255,0.2)" />
+            <div className="label-caps">NO OPERATIVES FOUND</div>
+            <div className="label-caps" style={{ opacity: 0.5 }}>ADJUST SEARCH PARAMETERS</div>
           </div>
         )}
       </div>
 
       {/* Chat Modal */}
       {chatOpen && (
-        <div className="chat-modal-overlay" onClick={e => e.target === e.currentTarget && setChatOpen(null)}>
-          <div className="chat-modal">
-            <div className="chat-header">
-              <div style={{
-                width: 40, height: 40, borderRadius: '50%',
-                background: `linear-gradient(135deg, ${chatOpen.color}, ${chatOpen.color}88)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', fontSize: '1.1rem', fontWeight: 'bold'
-              }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={e => e.target === e.currentTarget && setChatOpen(null)}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', height: '80vh', borderTop: `2px solid ${chatOpen.color}` }}>
+            <div style={{ padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '40px', height: '40px', border: `1px solid ${chatOpen.color}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: chatOpen.color, fontFamily: 'Space Grotesk', fontWeight: 700 }}>
                 {chatOpen.initials}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{chatOpen.name}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-safe-light)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span className="pulse-dot" style={{ width: 6, height: 6 }}></span>
-                  Online · Paris
+                <div className="label-caps" style={{ color: '#fff' }}>{chatOpen.name.toUpperCase()}</div>
+                <div className="label-caps" style={{ fontSize: '9px', color: 'var(--s-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: 6, height: 6, background: 'currentColor', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></div>
+                  ACTIVE LINK · {chatOpen.city.toUpperCase()}
                 </div>
               </div>
-              {chatOpen.verified && <span className="badge badge-purple" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ShieldCheck size={12} /> Verified</span>}
+              {chatOpen.verified && <span className="label-caps" style={{ color: 'var(--s-primary)', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid currentColor', padding: '4px 8px', fontSize: '9px' }}><ShieldCheck size={12} /> VERIFIED</span>}
               <button
+                className="btn btn-secondary"
                 onClick={() => setChatOpen(null)}
-                style={{ color: 'var(--color-text-muted)', fontSize: '1.2rem', padding: '4px 8px' }}
-                id="close-chat-btn"
+                style={{ padding: '8px' }}
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="chat-messages">
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="label-caps" style={{ textAlign: 'center', opacity: 0.3, marginBottom: '16px' }}>END-TO-END ENCRYPTION ENABLED</div>
               {messages.map(msg => (
-                <div key={msg.id} className={`message-bubble ${msg.sent ? 'sent' : 'received'}`}>
-                  {msg.text}
+                <div key={msg.id} style={{ alignSelf: msg.sent ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+                  <div style={{ 
+                    padding: '12px 16px', 
+                    background: msg.sent ? 'var(--s-primary)' : 'rgba(255,255,255,0.05)', 
+                    color: msg.sent ? '#000' : '#fff', 
+                    border: msg.sent ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    fontFamily: 'Manrope',
+                    fontSize: '0.875rem'
+                  }}>
+                    {msg.text.toUpperCase()}
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="chat-input-area">
+            <div style={{ padding: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '16px' }}>
               <input
-                className="chat-input"
-                placeholder="Type a message..."
+                style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0 16px', color: '#fff', fontFamily: 'Space Grotesk', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '10px' }}
+                placeholder="TYPE TRANSMISSION..."
                 value={newMsg}
                 onChange={e => setNewMsg(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                id="chat-message-input"
               />
               <button
                 className="btn btn-primary"
-                style={{ padding: '10px 16px' }}
+                style={{ padding: '12px 24px' }}
                 onClick={sendMessage}
-                id="send-message-btn"
               >
-                Send
+                TRANSMIT
               </button>
             </div>
           </div>

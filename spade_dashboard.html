@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SHEROAM - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed": "#131f00",
+                        "on-tertiary-fixed": "#07200b",
+                        "on-background": "#e2e2e2",
+                        "on-tertiary": "#1d361e",
+                        "tertiary-fixed-dim": "#b0cfac",
+                        "primary": "#ffffff",
+                        "on-primary": "#243600",
+                        "inverse-primary": "#4d661c",
+                        "secondary": "#c5c7c1",
+                        "outline-variant": "#44483b",
+                        "surface": "#131313",
+                        "error-container": "#93000a",
+                        "surface-tint": "#b3d17a",
+                        "background": "#131313",
+                        "on-tertiary-container": "#506b4f",
+                        "on-secondary-fixed-variant": "#444843",
+                        "outline": "#8f9282",
+                        "error": "#ffb4ab",
+                        "surface-container": "#1f1f1f",
+                        "secondary-fixed-dim": "#c5c7c1",
+                        "inverse-on-surface": "#303030",
+                        "inverse-surface": "#e2e2e2",
+                        "tertiary": "#ffffff",
+                        "secondary-fixed": "#e1e3dc",
+                        "tertiary-fixed": "#ccebc7",
+                        "tertiary-container": "#ccebc7",
+                        "on-primary-fixed-variant": "#364e03",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-variant": "#353535",
+                        "primary-fixed-dim": "#b3d17a",
+                        "on-secondary-container": "#b3b6b0",
+                        "primary-fixed": "#ceee93",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error": "#690005",
+                        "on-secondary-fixed": "#191c18",
+                        "on-secondary": "#2e312d",
+                        "surface-dim": "#131313",
+                        "secondary-container": "#444843",
+                        "on-primary-container": "#536d22",
+                        "surface-container-highest": "#353535",
+                        "on-tertiary-fixed-variant": "#334d33",
+                        "on-surface-variant": "#c5c8b7",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-container": "#ceee93",
+                        "surface-bright": "#393939",
+                        "on-surface": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "160px",
+                        "gutter": "24px",
+                        "margin-edge": "64px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Space Grotesk"],
+                        "body-sm": ["Manrope"],
+                        "display-2xl": ["Space Grotesk"],
+                        "body-base": ["Manrope"],
+                        "label-mono": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["64px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "160%", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "display-2xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "500" }],
+                        "body-base": ["16px", { "lineHeight": "160%", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "120%", "letterSpacing": "-0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Subtle geometric background pattern */
+        body {
+            background-color: #000000;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            background-position: center center;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Neon glow utility */
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(217, 249, 157, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-12 py-6 bg-[#000000]/80 backdrop-blur-3xl border-b border-white/10 hairline-border-white/15 flat-no-shadows">
+<div class="text-2xl font-light tracking-[0.3em] text-white font-['Space_Grotesk']">SHEROAM</div>
+<div class="hidden md:flex space-x-12">
+<a class="font-['Space_Grotesk'] uppercase tracking-[0.15em] text-[11px] font-medium text-[#D9F99D] border-b border-[#D9F99D] pb-1 liquid-hover-effect-staggered-reveal" href="#">Vault</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-[0.15em] text-[11px] font-medium text-white/50 hover:text-white transition-colors duration-500 liquid-hover-effect-staggered-reveal" href="#">Network</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-[0.15em] text-[11px] font-medium text-white/50 hover:text-white transition-colors duration-500 liquid-hover-effect-staggered-reveal" href="#">Protocol</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-[0.15em] text-[11px] font-medium text-white/50 hover:text-white transition-colors duration-500 liquid-hover-effect-staggered-reveal" href="#">Intelligence</a>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex space-x-4">
+<span class="material-symbols-outlined text-white/70 hover:text-[#D9F99D] transition-colors cursor-pointer text-[20px]" data-icon="search">search</span>
+<span class="material-symbols-outlined text-white/70 hover:text-[#D9F99D] transition-colors cursor-pointer text-[20px]" data-icon="account_shield">shield</span>
+</div>
+<button class="hidden md:block font-['Space_Grotesk'] uppercase tracking-[0.1em] text-[10px] font-medium px-6 py-3 border border-white/20 hover:border-[#D9F99D] hover:text-[#D9F99D] transition-all duration-300 text-white rounded-none">
+                Secure Access
+            </button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow pt-[160px] pb-section-gap px-4 md:px-margin-edge max-w-container-max mx-auto w-full flex flex-col items-center justify-center relative">
+<!-- Hero Section -->
+<div class="text-center mb-[120px] max-w-4xl relative z-10">
+<h1 class="font-display-2xl text-display-2xl text-primary mb-8 tracking-tighter uppercase leading-[0.9]">
+                TRAVEL SOLO.<br/>STAY SAFE.
+            </h1>
+<p class="font-label-mono text-label-mono text-secondary tracking-[0.3em] mb-12 uppercase max-w-2xl mx-auto opacity-70">
+                ENCRYPTED TRAVEL SECURITY FOR THE GLOBAL EXPLORER.
+            </p>
+<button class="group relative inline-flex items-center justify-center px-8 py-4 font-label-mono text-label-mono uppercase tracking-[0.2em] border border-primary-container text-primary hover:bg-primary-container hover:text-on-primary-container transition-all duration-500 overflow-hidden">
+<span class="relative z-10">INITIALIZE PROTECTION</span>
+<div class="absolute inset-0 bg-primary-container opacity-0 group-hover:opacity-20 neon-glow transition-opacity duration-500"></div>
+</button>
+</div>
+<!-- Dashboard Grid -->
+<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+<!-- Threat Level Card -->
+<div class="glass-panel p-8 flex flex-col justify-between min-h-[320px] relative overflow-hidden group hover:border-primary-container/50 transition-colors duration-500">
+<div class="flex justify-between items-start mb-12">
+<h3 class="font-label-mono text-label-mono text-secondary tracking-[0.2em] uppercase">LIVE THREAT LEVEL</h3>
+<span class="material-symbols-outlined text-primary-container fill text-[24px]" data-icon="radar">radar</span>
+</div>
+<div>
+<div class="flex items-baseline space-x-2 mb-4">
+<span class="font-display-lg text-display-lg text-primary">82%</span>
+<span class="font-label-mono text-label-mono text-primary-container tracking-widest uppercase">Safe</span>
+</div>
+<!-- Animated Bar Mockup (CSS static representation) -->
+<div class="w-full h-1 bg-white/10 mt-6 relative overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-[82%] bg-primary-container neon-glow"></div>
+<div class="absolute top-0 left-[82%] h-full w-2 bg-white blur-[2px]"></div>
+</div>
+<p class="font-body-sm text-body-sm text-surface-variant mt-4 opacity-50 uppercase tracking-widest text-[10px]">Location: Tokyo, Japan</p>
+</div>
+</div>
+<!-- Active Buddy Network Card -->
+<div class="glass-panel p-8 flex flex-col justify-between min-h-[320px] relative overflow-hidden group hover:border-primary-container/50 transition-colors duration-500">
+<div class="flex justify-between items-start mb-12">
+<h3 class="font-label-mono text-label-mono text-secondary tracking-[0.2em] uppercase">ACTIVE BUDDY NETWORK</h3>
+<span class="material-symbols-outlined text-white/50 text-[24px]" data-icon="group">group</span>
+</div>
+<div>
+<div class="flex items-center space-x-4 mb-8">
+<div class="relative">
+<span class="font-display-lg text-display-lg text-primary">12</span>
+<div class="absolute top-2 -right-3 w-2 h-2 bg-primary-container rounded-full neon-glow"></div>
+</div>
+<span class="font-label-mono text-label-mono text-secondary tracking-widest uppercase opacity-70">Online</span>
+</div>
+<div class="flex space-x-3">
+<div class="w-10 h-10 rounded-none border border-white/20 flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover opacity-80 grayscale" data-alt="close-up portrait of a woman looking confident, black and white, high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1qG6HTqUk9zTan8S-VxtZSogytgWyPcRgY5RswPQiRDCffAxj2OVcqBnoBDG7OOVFLY3NtUMBoAa9JKB4a4PTKggq5yv4u9Dyt_KetYe5BRg108Sq3YXVh5ELy9neuK4RaVLIXnPuYgqPLoU87tpUZ8EfV2ZJxUTkBCQlG2YjtLsKHUCZZDDLGW2Qhn6R73Kc-21lFqdD0yApQ6sHsBGHXPHF0axc0UTH-1JsnYjGZmkxRtryIfyatvhxqjoxVWsx1yg-cMoitdEE"/>
+</div>
+<div class="w-10 h-10 rounded-none border border-white/20 flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover opacity-80 grayscale" data-alt="portrait of a young man, serious expression, dramatic lighting, black and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh6zy5drWPZTXCYuPpRKuoLkgfeP37PkH-A2jUcq_7GiB3UzzGYUhG8hXUivMHeppb_8iEKvoI1_Zp2XuVIbePqWuA3XSkA-gzzK4bDPZ_1E9cOipvxWLrnDae8OvNJnU5xu-Hk4cWHI3sqWd0hBJX67ZBnVgFnQzhvXLo7_KkFqwfYJkVBTHdERZZsRcGVjUCR8EMAwoneR-NKYj35lvE6bAtJdOFABlHx1HY4yFEMQfJe76uE6JDZamMv4vvKXtueSlk4SW5zmHu"/>
+</div>
+<div class="w-10 h-10 rounded-none border border-white/20 flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover opacity-80 grayscale" data-alt="portrait of a woman with short hair, profile view, moody lighting, black and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3U5GtjbdtSsWJL4CGDCVdTh8iAAk1EpVkVFlzW57RPZva5Ig3XrDDjnIiYuFWbA0bKRHbCYfiPNAc22D4yV5vKo89sh95xgIA-qDGK4_feSTaTI645KzrDMtqwCJKrJNz1l_-Mu8uOwphZtbNbMohkEFx5cFSS5lYaFJbCaJATnyO60lE80R_k2immQnblAzHwpUNfsnVg4VdzkvxrO9geaHHozOVwsAt_IVpzJjPpHkVko7PjyYlFo-8PC67A37G2WM0nfCa6KSE"/>
+</div>
+<div class="w-10 h-10 rounded-none border border-white/10 flex items-center justify-center bg-white/5">
+<span class="font-label-mono text-[10px] text-white/50">+9</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Security Protocols Card -->
+<div class="glass-panel p-8 flex flex-col justify-between min-h-[320px] relative overflow-hidden group hover:border-primary-container/50 transition-colors duration-500">
+<div class="flex justify-between items-start mb-12">
+<h3 class="font-label-mono text-label-mono text-secondary tracking-[0.2em] uppercase">SECURITY PROTOCOLS</h3>
+<span class="material-symbols-outlined text-white/50 text-[24px]" data-icon="shield_lock">shield_lock</span>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between border-b border-white/10 pb-4">
+<span class="font-label-mono text-label-mono text-primary uppercase tracking-widest">End-to-End Encryption</span>
+<span class="material-symbols-outlined text-primary-container text-[16px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center justify-between border-b border-white/10 pb-4">
+<span class="font-label-mono text-label-mono text-primary uppercase tracking-widest">Location Cloaking</span>
+<span class="material-symbols-outlined text-primary-container text-[16px]" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-center justify-between pb-2">
+<span class="font-label-mono text-label-mono text-white/50 uppercase tracking-widest">Emergency Broadcast</span>
+<span class="font-label-mono text-[10px] text-white/30 uppercase tracking-widest">Standby</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="full-width border-t border-white/10 mt-[160px] 1px-hairline-top none staggered-slide-up-on-scroll flex flex-col md:flex-row justify-between items-center px-12 py-20 max-w-7xl mx-auto bg-[#000000]">
+<div class="text-lg font-bold text-white font-['Space_Grotesk'] mb-8 md:mb-0">SHEROAM</div>
+<div class="flex flex-wrap justify-center gap-8 mb-8 md:mb-0">
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-white hover:text-[#D9F99D] duration-500" href="#">Security Whitepaper</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-white/40 hover:text-[#D9F99D] duration-500" href="#">Privacy Protocol</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-white/40 hover:text-[#D9F99D] duration-500" href="#">Terminal</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-white/40 hover:text-[#D9F99D] duration-500" href="#">System Status</a>
+</div>
+<div class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-[#D9F99D]">
+            © 2024 SHEROAM. END-TO-END ENCRYPTED.
+        </div>
+</footer>
+</body></html>

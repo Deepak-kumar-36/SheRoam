@@ -1,218 +1,108 @@
-import { Map, Users, ShieldAlert, MessageCircle, MapPin, Calendar, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { Radar, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
 
-export default function Dashboard({ navigate, addToast, user }) {
-  const alerts = [
-    { color: 'alert-dot-safe', text: 'Le Marais (Paris 4th) rated 8.7/10 for women\'s safety — ideal evening walks', time: '2 min ago' },
-    { color: 'alert-dot-warning', text: 'Avoid Rue de Rivoli metro after 11pm — multiple reports of harassment this week', time: '14 min ago' },
-    { color: 'alert-dot-safe', text: 'SheStay "Hôtel du Temple" confirmed as women-safe pick nearby', time: '1 hr ago' },
-    { color: 'alert-dot-warning', text: 'Eiffel Tower crowds high today — keep belongings secure', time: '2 hr ago' },
-  ]
-
+export default function Dashboard({ navigate, user }) {
   const upcomingBuddies = [
-    { name: 'Amara K.', city: 'Paris', dates: 'Apr 24–28', initials: 'AK', color: '#7C3AED' },
-    { name: 'Lisa H.', city: 'Paris', dates: 'Apr 25–30', initials: 'LH', color: '#EC4899' },
-    { name: 'Nour A.', city: 'Paris', dates: 'Apr 23–26', initials: 'NA', color: '#10B981' },
+    { initials: 'AK', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1qG6HTqUk9zTan8S-VxtZSogytgWyPcRgY5RswPQiRDCffAxj2OVcqBnoBDG7OOVFLY3NtUMBoAa9JKB4a4PTKggq5yv4u9Dyt_KetYe5BRg108Sq3YXVh5ELy9neuK4RaVLIXnPuYgqPLoU87tpUZ8EfV2ZJxUTkBCQlG2YjtLsKHUCZZDDLGW2Qhn6R73Kc-21lFqdD0yApQ6sHsBGHXPHF0axc0UTH-1JsnYjGZmkxRtryIfyatvhxqjoxVWsx1yg-cMoitdEE' },
+    { initials: 'LH', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDh6zy5drWPZTXCYuPpRKuoLkgfeP37PkH-A2jUcq_7GiB3UzzGYUhG8hXUivMHeppb_8iEKvoI1_Zp2XuVIbePqWuA3XSkA-gzzK4bDPZ_1E9cOipvxWLrnDae8OvNJnU5xu-Hk4cWHI3sqWd0hBJX67ZBnVgFnQzhvXLo7_KkFqwfYJkVBTHdERZZsRcGVjUCR8EMAwoneR-NKYj35lvE6bAtJdOFABlHx1HY4yFEMQfJe76uE6JDZamMv4vvKXtueSlk4SW5zmHu' },
+    { initials: 'NA', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB3U5GtjbdtSsWJL4CGDCVdTh8iAAk1EpVkVFlzW57RPZva5Ig3XrDDjnIiYuFWbA0bKRHbCYfiPNAc22D4yV5vKo89sh95xgIA-qDGK4_feSTaTI645KzrDMtqwCJKrJNz1l_-Mu8uOwphZtbNbMohkEFx5cFSS5lYaFJbCaJATnyO60lE80R_k2immQnblAzHwpUNfsnVg4VdzkvxrO9geaHHozOVwsAt_IVpzJjPpHkVko7PjyYlFo-8PC67A37G2WM0nfCa6KSE' },
   ]
 
   return (
-    <div className="page-wrapper">
-      <div className="container" style={{ padding: '40px 24px' }}>
-
+    <div className="page">
+      <div className="container">
         {/* Header */}
-        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '64px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '24px' }}>
           <div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '4px' }}>
-              Good Evening,
-            </div>
-            <h1 className="page-title">Welcome back, <span className="gradient-text">{user.name.split(' ')[0]}</span></h1>
-            <p className="page-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {user.city} · {user.tripDates}</p>
+            <div className="label-caps" style={{ marginBottom: '8px' }}>SYSTEM TERMINAL OP:{user.name.split(' ')[0]}</div>
+            <h1 className="display-xl" style={{ textTransform: 'uppercase' }}>COMMAND CENTER</h1>
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <span className="badge badge-purple" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ShieldCheck size={14} /> Verified Traveler</span>
-            <span className="badge badge-safe" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={14} /> All Good</span>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <span className="chip chip-safe"><CheckCircle2 size={12} /> SECURE CONNECTION</span>
+            <span className="chip"><ShieldCheck size={12} /> {user.city}</span>
           </div>
         </div>
 
-        <div className="dashboard-grid" style={{ marginTop: '32px' }}>
-
-          {/* Left Column */}
-          <div>
-            {/* Trip Card */}
-            <div className="trip-card" style={{ marginBottom: '20px' }}>
-              <div className="trip-card-glow"></div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
-                      CURRENT TRIP
-                    </div>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>{user.city} <MapPin size={24} color="var(--s-primary)" /></h2>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <Calendar size={14} /> {user.tripDates} · Day 1 of 13
-                    </div>
-                  </div>
-                  <span className="badge badge-safe">SAFE ZONE</span>
-                </div>
-
-                <div style={{ display: 'flex', gap: '24px', marginBottom: '24px' }}>
-                  <div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-safe-light)' }}>8.4</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>City Safety Score</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-primary-light)' }}>3</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Potential Buddies</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--color-secondary-light)' }}>4</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Emergency Contacts</div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '10px', padding: '12px 16px', fontSize: '0.85rem', color: 'var(--color-safe-light)' }}>
-                  <ShieldCheck size={16} /> SOS contacts active · Location sharing: ON · Guardian mode: ARMED
-                </div>
-              </div>
+        {/* Dashboard Grid */}
+        <div className="dashboard-grid">
+          
+          {/* Threat Level */}
+          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', minHeight: '320px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px' }}>
+              <h3 className="label-caps">LIVE THREAT LEVEL</h3>
+              <Radar size={24} color="var(--s-primary)" />
             </div>
-
-            {/* Quick Actions */}
-            <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '14px', color: 'var(--color-text-secondary)' }}>QUICK ACTIONS</h3>
-              <div className="quick-actions">
-                <button className="quick-action-btn" onClick={() => navigate('map')} id="dash-map-btn">
-                  <div className="action-icon action-map">
-                    <Map size={20} color="var(--color-primary-light)" />
-                  </div>
-                  Safety Map
-                </button>
-                <button className="quick-action-btn" onClick={() => navigate('buddy')} id="dash-buddy-btn">
-                  <div className="action-icon action-buddy">
-                    <Users size={20} color="var(--color-secondary-light)" />
-                  </div>
-                  Find Buddy
-                </button>
-                <button className="quick-action-btn" onClick={() => navigate('sos')} id="dash-sos-btn" style={{ borderColor: 'rgba(239,68,68,0.3)' }}>
-                  <div className="action-icon action-sos">
-                    <ShieldAlert size={20} color="var(--color-sos-light)" />
-                  </div>
-                  SOS Alert
-                </button>
-                <button className="quick-action-btn" onClick={() => navigate('community')} id="dash-forum-btn">
-                  <div className="action-icon action-forum">
-                    <MessageCircle size={20} color="#60a5fa" />
-                  </div>
-                  Forum
-                </button>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '16px' }}>
+                <span className="metric-large">82%</span>
+                <span className="label-caps" style={{ color: 'var(--s-primary)' }}>SAFE</span>
               </div>
-            </div>
-
-            {/* Nearby Buddies */}
-            <div className="alerts-card">
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Users size={16} /> WOMEN NEARBY — Same Trip
+              <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '82%', background: 'var(--s-primary)', boxShadow: 'var(--glow-primary)' }}></div>
+                <div style={{ position: 'absolute', top: 0, left: '82%', height: '100%', width: '8px', background: '#fff', filter: 'blur(2px)' }}></div>
               </div>
-              {upcomingBuddies.map(b => (
-                <div key={b.name} className="alert-item" style={{ alignItems: 'center' }}>
-                  <div style={{
-                    width: 36, height: 36, borderRadius: '50%',
-                    background: `linear-gradient(135deg, ${b.color}, ${b.color}88)`, color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.8rem', fontWeight: 'bold', flexShrink: 0,
-                  }}>
-                    {b.initials}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{b.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {b.dates}</div>
-                  </div>
-                  <button
-                    className="btn btn-primary"
-                    style={{ padding: '6px 14px', fontSize: '0.8rem' }}
-                    onClick={() => {
-                      addToast(`Chat request sent to ${b.name}!`, 'success')
-                    }}
-                  >
-                    Connect
-                  </button>
-                </div>
-              ))}
-              <button
-                className="btn btn-secondary"
-                style={{ width: '100%', marginTop: '12px' }}
-                onClick={() => navigate('buddy')}
-              >
-                View All Buddies →
-              </button>
+              <p className="label-caps" style={{ marginTop: '16px', opacity: 0.5 }}>LOCATION: {user.city.toUpperCase()}</p>
             </div>
           </div>
 
-          {/* Right Column */}
-          <div>
-            {/* Safety Score */}
-            <div className="safety-score-card" style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                AREA SAFETY SCORE
-              </div>
-              <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                <div style={{
-                  position: 'relative',
-                  width: 100, height: 100, margin: '0 auto 12px',
-                  borderRadius: '50%',
-                  background: 'conic-gradient(#10B981 0% 84%, #F59E0B 84% 95%, #1a0e36 95% 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    width: 72, height: 72, background: 'var(--color-bg)',
-                    borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--color-safe-light)' }}>8.4</div>
-                  </div>
+          {/* Active Buddy Network */}
+          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', minHeight: '320px', justifyContent: 'space-between' }} onClick={() => navigate('buddy')} role="button">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px' }}>
+              <h3 className="label-caps">ACTIVE BUDDY NETWORK</h3>
+              <Users size={24} color="rgba(255,255,255,0.5)" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+                <div style={{ position: 'relative' }}>
+                  <span className="metric-large">12</span>
+                  <div style={{ position: 'absolute', top: '8px', right: '-12px', width: '8px', height: '8px', background: 'var(--s-primary)', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></div>
                 </div>
-                <span className="badge badge-safe">VERY SAFE</span>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '10px' }}>Le Marais, Paris · Updated 5min ago</p>
+                <span className="label-caps" style={{ opacity: 0.7 }}>ONLINE</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[
-                  { label: 'Women Safety', score: 9.1, color: '#10B981' },
-                  { label: 'Night Safety', score: 7.8, color: '#F59E0B' },
-                  { label: 'Transit Safety', score: 8.5, color: '#10B981' },
-                ].map(s => (
-                  <div key={s.label}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px' }}>
-                      <span style={{ color: 'var(--color-text-secondary)' }}>{s.label}</span>
-                      <span style={{ fontWeight: 600, color: s.color }}>{s.score}</span>
-                    </div>
-                    <div style={{ height: 4, background: 'var(--color-border)', borderRadius: 4 }}>
-                      <div style={{ width: `${s.score * 10}%`, height: '100%', background: s.color, borderRadius: 4 }}></div>
-                    </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {upcomingBuddies.map((b, i) => (
+                  <div key={i} style={{ width: '40px', height: '40px', border: '1px solid rgba(255,255,255,0.2)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={b.img} alt={b.initials} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%)', opacity: 0.8 }} />
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* Live Alerts */}
-            <div className="alerts-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  LIVE ALERTS
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span className="pulse-dot"></span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-safe-light)' }}>Live</span>
+                <div style={{ width: '40px', height: '40px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span className="label-caps">+9</span>
                 </div>
               </div>
-              {alerts.map((a, i) => (
-                <div key={i} className="alert-item">
-                  <div className={`alert-dot ${a.color}`}></div>
-                  <div>
-                    <div className="alert-text">{a.text}</div>
-                    <div className="alert-time">{a.time}</div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
+
+          {/* Security Protocols */}
+          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', minHeight: '320px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px' }}>
+              <h3 className="label-caps">SECURITY PROTOCOLS</h3>
+              <ShieldCheck size={24} color="rgba(255,255,255,0.5)" />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
+                <span className="label-caps" style={{ color: 'var(--s-primary)' }}>END-TO-END ENCRYPTION</span>
+                <CheckCircle2 size={16} color="var(--s-primary)" />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
+                <span className="label-caps" style={{ color: 'var(--s-primary)' }}>LOCATION CLOAKING</span>
+                <CheckCircle2 size={16} color="var(--s-primary)" />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '8px' }}>
+                <span className="label-caps" style={{ color: 'rgba(255,255,255,0.5)' }}>EMERGENCY BROADCAST</span>
+                <span className="label-caps" style={{ color: 'rgba(255,255,255,0.3)', fontSize: '10px' }}>STANDBY</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Global Action Grid */}
+        <div style={{ marginTop: '64px' }} className="grid-2">
+           <button className="btn btn-secondary" style={{ padding: '32px', fontSize: '1rem' }} onClick={() => navigate('map')}>
+             OPEN COMMAND MAP
+           </button>
+           <button className="btn btn-danger" style={{ padding: '32px', fontSize: '1rem' }} onClick={() => navigate('sos')}>
+             INITIATE SOS
+           </button>
         </div>
       </div>
     </div>

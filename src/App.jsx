@@ -56,18 +56,11 @@ export default function App() {
 
   return (
     <>
-      {/* Stitch decorative background lines */}
-      <div className="stitch-lines" aria-hidden="true">
-        <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-          <path d="M -100 600 Q 300 200 700 500 Q 1100 800 1540 300" stroke="white" fill="none" strokeWidth="2"/>
-          <path d="M -50 800 Q 400 400 800 650 Q 1200 900 1490 450" stroke="white" fill="none" strokeWidth="1"/>
-          <path d="M 200 -50 Q 400 300 600 150 Q 900 0 1100 400" stroke="white" fill="none" strokeWidth="1.5"/>
-        </svg>
-      </div>
+
 
       <Navbar page={page} navigate={navigate} isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
 
-      <main className="page">
+      <main>
         {page === 'landing'   && <Landing   {...sharedProps} onLogin={handleLogin} />}
         {page === 'verification'&& <VerificationPage onVerified={() => setPage('dashboard')} addToast={addToast} />}
         {page === 'dashboard' && <Dashboard {...sharedProps} />}

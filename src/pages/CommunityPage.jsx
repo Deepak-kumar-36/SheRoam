@@ -7,62 +7,62 @@ import {
 
 const INITIAL_POSTS = [
   {
-    id: 1, category: 'safety', catLabel: 'Safety Tips',
-    author: 'Priya S.', initials: 'PS', color: '#7C3AED',
-    time: '2 min ago', verified: true,
-    title: 'Watch out for the "broken taxi meter" scam in Paris!',
-    content: 'Just had this happen to me near CDG airport. Driver claimed his meter was broken and tried to charge 3x the normal fare. Tip: Always book via app (Uber/G7) and screenshot the price BEFORE getting in. Estimated CDG→Paris centre: €35-55.',
+    id: 1, category: 'safety', catLabel: 'SAFETY TIPS',
+    author: 'PRIYA S.', initials: 'PS', color: '#ceee93',
+    time: '2 MIN AGO', verified: true,
+    title: 'WATCH OUT FOR THE "BROKEN TAXI METER" SCAM IN PARIS',
+    content: 'JUST HAD THIS HAPPEN TO ME NEAR CDG AIRPORT. DRIVER CLAIMED HIS METER WAS BROKEN AND TRIED TO CHARGE 3X THE NORMAL FARE. TIP: ALWAYS BOOK VIA APP (UBER/G7) AND SCREENSHOT THE PRICE BEFORE GETTING IN. ESTIMATED CDG→PARIS CENTRE: €35-55.',
     likes: 47, comments: 12, bookmarks: 23, liked: false, bookmarked: false,
   },
   {
-    id: 2, category: 'accommodation', catLabel: 'Accommodation',
-    author: 'Lisa H.', initials: 'LH', color: '#EC4899',
-    time: '18 min ago', verified: true,
-    title: 'SheStay Review: Generator Hostel Paris — 9.5/10',
-    content: 'Stayed here for 5 nights solo. Female-only dorms available, secure lockers, 24/7 reception, and the staff actually checked that everyone returning after midnight showed their key card. Also hosted a solo women travelers meetup — 20+ women showed up! Highly recommend.',
+    id: 2, category: 'accommodation', catLabel: 'STAYS',
+    author: 'LISA H.', initials: 'LH', color: '#ff4a8d',
+    time: '18 MIN AGO', verified: true,
+    title: 'SHESTAY REVIEW: GENERATOR HOSTEL PARIS — 9.5/10',
+    content: 'STAYED HERE FOR 5 NIGHTS SOLO. FEMALE-ONLY DORMS AVAILABLE, SECURE LOCKERS, 24/7 RECEPTION, AND THE STAFF ACTUALLY CHECKED THAT EVERYONE RETURNING AFTER MIDNIGHT SHOWED THEIR KEY CARD. ALSO HOSTED A SOLO WOMEN TRAVELERS MEETUP — 20+ WOMEN SHOWED UP. HIGHLY RECOMMEND.',
     likes: 93, comments: 28, bookmarks: 61, liked: true, bookmarked: true,
   },
   {
-    id: 3, category: 'routes', catLabel: 'Routes',
-    author: 'Nour A.', initials: 'NA', color: '#10B981',
-    time: '1 hr ago', verified: false,
-    title: 'Best safe walking route: Eiffel Tower → Champ de Mars (evening)',
-    content: 'I was nervous about walking alone at dusk but this route is well-lit and always busy with families and tourists. Took Ave de la Motte-Picquet instead of quiet side streets. Felt totally safe at 9pm. Saved the SheRoam safety map as offline just in case!',
+    id: 3, category: 'routes', catLabel: 'ROUTES',
+    author: 'NOUR A.', initials: 'NA', color: '#f59e0b',
+    time: '1 HR AGO', verified: false,
+    title: 'BEST SAFE WALKING ROUTE: EIFFEL TOWER → CHAMP DE MARS (EVENING)',
+    content: 'I WAS NERVOUS ABOUT WALKING ALONE AT DUSK BUT THIS ROUTE IS WELL-LIT AND ALWAYS BUSY WITH FAMILIES AND TOURISTS. TOOK AVE DE LA MOTTE-PICQUET INSTEAD OF QUIET SIDE STREETS. FELT TOTALLY SAFE AT 9PM. SAVED THE SHEROAM SAFETY MAP AS OFFLINE JUST IN CASE.',
     likes: 34, comments: 9, bookmarks: 15, liked: false, bookmarked: false,
   },
   {
-    id: 4, category: 'meetups', catLabel: 'Meetups',
-    author: 'Amara K.', initials: 'AK', color: '#F59E0B',
-    time: '3 hr ago', verified: true,
-    title: 'Paris SheRoam Meetup — Sunday Apr 27 @ Café de Flore!',
-    content: 'Hey Paris ladies! Organizing a Sunday afternoon meetup for solo travelers. Plan: meet at Café de Flore at 3pm, afternoon stroll through Saint-Germain, then optional dinner. All SheRoam members welcome. DM me or RSVP in comments. We\'re at 12 people so far!',
+    id: 4, category: 'meetups', catLabel: 'MEETUPS',
+    author: 'AMARA K.', initials: 'AK', color: '#ceee93',
+    time: '3 HR AGO', verified: true,
+    title: 'PARIS SHEROAM MEETUP — SUNDAY APR 27 @ CAFÉ DE FLORE',
+    content: 'HEY PARIS OPERATIVES. ORGANIZING A SUNDAY AFTERNOON MEETUP FOR SOLO TRAVELERS. PLAN: MEET AT CAFÉ DE FLORE AT 3PM, AFTERNOON STROLL THROUGH SAINT-GERMAIN, THEN OPTIONAL DINNER. ALL SHEROAM MEMBERS WELCOME. DM ME OR RSVP IN COMMENTS. WE\'RE AT 12 PEOPLE SO FAR.',
     likes: 78, comments: 41, bookmarks: 38, liked: true, bookmarked: false,
   },
   {
-    id: 5, category: 'safety', catLabel: 'Safety Tips',
-    author: 'Sofia M.', initials: 'SM', color: '#6366F1',
-    time: '5 hr ago', verified: true,
-    title: 'Night Metro safety in Paris — lines to avoid after 10pm',
-    content: 'After 3 solo trips here, here\'s my take: Lines 4 & 9 are generally fine. Avoid Line 13 after 10pm (too many reports). Line 2 in Pigalle area — take a cab instead. RER B to airport is fine if you sit in the first/middle cars near the conductor. Always stay on platform with others.',
+    id: 5, category: 'safety', catLabel: 'SAFETY TIPS',
+    author: 'SOFIA M.', initials: 'SM', color: '#f59e0b',
+    time: '5 HR AGO', verified: true,
+    title: 'NIGHT METRO SAFETY IN PARIS — LINES TO AVOID AFTER 10PM',
+    content: 'AFTER 3 SOLO TRIPS HERE, HERE\'S MY TAKE: LINES 4 & 9 ARE GENERALLY FINE. AVOID LINE 13 AFTER 10PM (TOO MANY REPORTS). LINE 2 IN PIGALLE AREA — TAKE A CAB INSTEAD. RER B TO AIRPORT IS FINE IF YOU SIT IN THE FIRST/MIDDLE CARS NEAR THE CONDUCTOR. ALWAYS STAY ON PLATFORM WITH OTHERS.',
     likes: 156, comments: 34, bookmarks: 89, liked: false, bookmarked: true,
   },
 ]
 
 const TRENDING_DATA = [
-  { tag: '#ParisSafety', count: 243 },
-  { tag: '#SoloFemale', count: 189 },
-  { tag: '#SheStay', count: 156 },
-  { tag: '#NightSafety', count: 121 },
-  { tag: '#TravelBuddy', count: 98 },
-  { tag: '#DigitalNomad', count: 87 },
-  { tag: '#SOSNetwork', count: 65 }
+  { tag: '#PARISSAFETY', count: 243 },
+  { tag: '#SOLOFEMALE', count: 189 },
+  { tag: '#SHESTAY', count: 156 },
+  { tag: '#NIGHTSAFETY', count: 121 },
+  { tag: '#TRAVELBUDDY', count: 98 },
+  { tag: '#DIGITALNOMAD', count: 87 },
+  { tag: '#SOSNETWORK', count: 65 }
 ]
 
 const ONLINE_USERS = [
-  { name: 'Amara K.', location: 'Le Marais', initials: 'AK', color: '#F59E0B' },
-  { name: 'Lisa H.', location: 'Opéra', initials: 'LH', color: '#EC4899' },
-  { name: 'Fatima M.', location: 'Marais', initials: 'FM', color: '#EF4444' },
-  { name: 'Yuki T.', location: 'Montmartre', initials: 'YT', color: '#6366F1' },
+  { name: 'AMARA K.', location: 'LE MARAIS', initials: 'AK', color: '#ceee93' },
+  { name: 'LISA H.', location: 'OPÉRA', initials: 'LH', color: '#ff4a8d' },
+  { name: 'FATIMA M.', location: 'MARAIS', initials: 'FM', color: '#f59e0b' },
+  { name: 'YUKI T.', location: 'MONTMARTRE', initials: 'YT', color: '#ceee93' },
 ]
 
 export default function CommunityPage({ navigate, addToast, user }) {
@@ -74,20 +74,23 @@ export default function CommunityPage({ navigate, addToast, user }) {
 
   useEffect(() => {
     db.posts.getAll().then((data) => {
-      setPosts(data)
+      // Use the static ones if db returns empty for purely stylistic purposes, or map over returned data
+      if(data.length === 0) setPosts(INITIAL_POSTS)
+      else setPosts(data)
       setLoading(false)
     }).catch(err => {
       console.error(err)
+      setPosts(INITIAL_POSTS)
       setLoading(false)
     })
   }, [])
 
   const categories = [
-    { id: 'all', label: 'All', icon: <Globe size={14} /> },
-    { id: 'safety', label: 'Safety', icon: <Shield size={14} /> },
-    { id: 'accommodation', label: 'Stays', icon: <Home size={14} /> },
-    { id: 'routes', label: 'Routes', icon: <Map size={14} /> },
-    { id: 'meetups', label: 'Meetups', icon: <Calendar size={14} /> },
+    { id: 'all', label: 'ALL FREQUENCIES', icon: <Globe size={14} /> },
+    { id: 'safety', label: 'SAFETY Intel', icon: <Shield size={14} /> },
+    { id: 'accommodation', label: 'STAYS', icon: <Home size={14} /> },
+    { id: 'routes', label: 'ROUTES', icon: <Map size={14} /> },
+    { id: 'meetups', label: 'MEETUPS', icon: <Calendar size={14} /> },
   ]
 
   const filtered = activeCategory === 'all'
@@ -95,7 +98,6 @@ export default function CommunityPage({ navigate, addToast, user }) {
     : posts.filter(p => p.category === activeCategory)
 
   const toggleLike = async (id) => {
-    // Optimistic UI
     const targetPost = posts.find(p => p.id === id)
     if (!targetPost) return
 
@@ -116,119 +118,110 @@ export default function CommunityPage({ navigate, addToast, user }) {
     setPosts(prev => prev.map(p =>
       p.id === id ? { ...p, bookmarked: !p.bookmarked } : p
     ))
-    addToast('Post saved to your reading list', 'info')
+    addToast('INTEL SAVED TO ARCHIVE', 'info')
   }
 
   const submitPost = async () => {
     if (!newPostTitle.trim() || !newPostText.trim()) return
     
     const newPostPayload = {
-      category: 'general', cat_label: 'General',
-      color: '#7C3AED',
+      category: 'general', cat_label: 'GENERAL INTEL',
+      color: '#ceee93',
       verified: true,
-      title: newPostTitle,
-      content: newPostText,
+      title: newPostTitle.toUpperCase(),
+      content: newPostText.toUpperCase(),
     }
     
     try {
       const resultingPost = await db.posts.create(newPostPayload)
       setPosts(prev => [{
         ...resultingPost,
-        author: user?.name || 'You',
+        author: (user?.name || 'YOU').toUpperCase(),
         initials: user?.initials || 'U'
       }, ...prev])
       setNewPostTitle('')
       setNewPostText('')
-      addToast('Your post is live!', 'success')
+      addToast('TRANSMISSION SUCCESSFUL', 'success')
     } catch (e) {
-      addToast('Failed to post. Have you logged in?', 'error')
+      addToast('TRANSMISSION FAILED. CHECK CONNECTION.', 'error')
     }
   }
 
-  const catStyle = {
-    safety: 'cat-safety',
-    accommodation: 'cat-accommodation',
-    routes: 'cat-routes',
-    meetups: 'cat-meetups',
-    general: 'cat-general',
-  }
-
   return (
-    <div className="community-page">
-      <div className="container">
+    <div className="page">
+      <div className="container" style={{ maxWidth: '1200px' }}>
 
         {/* Header */}
-        <div className="page-header">
-          <div className="section-label">COMMUNITY FORUM</div>
-          <h1 className="page-title">
-            SheRoam <span className="gradient-text">Community</span>
-          </h1>
-          <p className="page-subtitle">Real advice from real women travelers — no fluff, no ads</p>
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '32px', marginBottom: '48px' }}>
+          <div className="label-caps" style={{ color: 'var(--s-primary)', marginBottom: '8px' }}>SECURE NETWORK</div>
+          <h1 className="headline-lg" style={{ textTransform: 'uppercase' }}>GLOBAL CHANNELS</h1>
+          <p className="label-caps" style={{ opacity: 0.5, marginTop: '8px' }}>VERIFIED INTEL FROM FIELD OPERATIVES. ENCRYPTED COMMUNICATIONS.</p>
         </div>
 
         {/* Category Filter */}
-        <div style={{ display: 'flex', gap: '8px', margin: '24px 0', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
           {categories.map(c => (
             <button
               key={c.id}
-              className={`map-filter-btn ${activeCategory === c.id ? 'active' : ''}`}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+              className={`btn ${activeCategory === c.id ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ padding: '8px 16px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px' }}
               onClick={() => setActiveCategory(c.id)}
-              id={`cat-${c.id}-btn`}
             >
-              {c.icon} {c.label}
+              {c.icon} <span className="label-caps">{c.label}</span>
             </button>
           ))}
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span className="pulse-dot"></span>
-            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>247 online now</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: 8, height: 8, background: 'var(--s-primary)', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></span>
+            <span className="label-caps" style={{ color: 'var(--s-primary)', opacity: 0.8 }}>247 ACTIVE</span>
           </div>
         </div>
 
-        <div className="community-layout">
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '32px', alignItems: 'start' }}>
 
           {/* Main Feed */}
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Compose */}
-            <div className="post-compose">
+            <div className="glass-panel" style={{ padding: '24px', display: 'flex', gap: '16px' }}>
               <div
-                className="compose-avatar"
-                style={{ background: 'linear-gradient(135deg, #7C3AED, #7C3AED88)', color: '#fff', fontSize: '1rem', fontWeight: 'bold' }}
+                style={{ width: '40px', height: '40px', border: '1px solid var(--s-primary)', color: 'var(--s-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Space Grotesk', fontWeight: 'bold' }}
               >
                 {user.initials || 'ME'}
               </div>
               <div style={{ flex: 1 }}>
                 <input
                   style={{
-                    width: '100%', background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--color-border)', borderRadius: '8px',
-                    padding: '10px 14px', color: 'var(--color-text-primary)',
-                    fontSize: '0.85rem', fontFamily: 'inherit', outline: 'none',
-                    marginBottom: '8px',
+                    width: '100%', background: 'transparent',
+                    border: 'none', borderBottom: '1px solid rgba(255,255,255,0.2)',
+                    padding: '8px 0', color: '#fff',
+                    fontFamily: 'Space Grotesk', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '10px',
+                    outline: 'none', marginBottom: '16px',
                   }}
-                  placeholder="Post title (e.g. 'Safest neighborhood in Barcelona?')"
+                  placeholder="TRANSMISSION SUBJECT..."
                   value={newPostTitle}
                   onChange={e => setNewPostTitle(e.target.value)}
-                  id="post-title-input"
                 />
                 <textarea
-                  className="compose-input"
-                  placeholder="Share a safety tip, accommodation review, or find travel buddies..."
+                  style={{
+                    width: '100%', background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    padding: '12px', color: '#fff',
+                    fontFamily: 'Manrope', fontSize: '0.875rem',
+                    outline: 'none', minHeight: '80px', resize: 'vertical'
+                  }}
+                  placeholder="INPUT INTEL HERE..."
                   value={newPostText}
                   onChange={e => setNewPostText(e.target.value)}
-                  id="post-content-input"
                 />
-                <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'flex-end' }}>
-                  <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Paperclip size={14} /> Attach
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Paperclip size={14} /> <span className="label-caps">ATTACH</span>
                   </button>
                   <button
                     className="btn btn-primary"
-                    style={{ padding: '8px 20px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    style={{ padding: '8px 24px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                     onClick={submitPost}
-                    id="submit-post-btn"
                   >
-                    Post <Send size={14} />
+                    <span className="label-caps">BROADCAST</span> <Send size={14} />
                   </button>
                 </div>
               </div>
@@ -236,120 +229,118 @@ export default function CommunityPage({ navigate, addToast, user }) {
 
             {/* Feed */}
             {filtered.map(post => (
-              <div key={post.id} className="post-card">
-                <div className="post-header">
-                  <div
-                    className="post-avatar"
-                    style={{ background: `linear-gradient(135deg, ${post.color}, ${post.color}88)`, color: '#fff', fontSize: '1.1rem', fontWeight: 'bold' }}
-                  >
-                    {post.initials}
-                  </div>
-                  <div className="post-meta">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span className="post-author">{post.author}</span>
-                      {post.verified && <span title="Identity Verified" style={{ display: 'flex' }}><ShieldCheck size={14} color="#4ade80" /></span>}
+              <div key={post.id} className="glass-panel" style={{ padding: '24px', borderLeft: `2px solid ${post.color}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div
+                      style={{ width: '40px', height: '40px', border: `1px solid ${post.color}`, color: post.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Space Grotesk', fontWeight: 'bold' }}
+                    >
+                      {post.initials}
                     </div>
-                    <div className="post-timestamp">{post.time}</div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className="label-caps" style={{ color: '#fff' }}>{post.author}</span>
+                        {post.verified && <ShieldCheck size={14} color="var(--s-primary)" />}
+                      </div>
+                      <div className="label-caps" style={{ opacity: 0.5, marginTop: '4px', fontSize: '9px' }}>{post.time}</div>
+                    </div>
                   </div>
-                  <span className={`post-category ${catStyle[post.category] || 'cat-general'}`}>
+                  <span className="label-caps" style={{ color: post.color, padding: '4px 8px', border: `1px solid ${post.color}`, fontSize: '9px' }}>
                     {post.catLabel}
                   </span>
                 </div>
 
-                <h3 className="post-title">{post.title}</h3>
-                <p className="post-content">{post.content}</p>
+                <h3 className="label-caps" style={{ fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px', color: '#fff' }}>{post.title}</h3>
+                <p className="label-caps" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: '24px' }}>{post.content}</p>
 
-                <div className="post-actions">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px' }}>
                   <button
-                    className={`post-action-btn ${post.liked ? 'liked' : ''}`}
+                    style={{ background: 'none', border: 'none', color: post.liked ? 'var(--s-primary)' : 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }}
                     onClick={() => toggleLike(post.id)}
-                    id={`like-post-${post.id}`}
                   >
-                    <Heart size={16} fill={post.liked ? 'currentColor' : 'none'} /> {post.likes}
+                    <Heart size={16} fill={post.liked ? 'currentColor' : 'none'} /> <span className="label-caps" style={{ fontSize: '10px' }}>{post.likes} ENDORSEMENTS</span>
                   </button>
                   <button
-                    className="post-action-btn"
-                    onClick={() => addToast('Comments coming in v1!', 'info')}
+                    style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }}
+                    onClick={() => addToast('COMMENTS LOCKED IN BETA MODULE', 'info')}
                   >
-                    <MessageCircle size={16} /> {post.comments}
+                    <MessageCircle size={16} /> <span className="label-caps" style={{ fontSize: '10px' }}>{post.comments} INQUIRIES</span>
                   </button>
+                  <div style={{ flex: 1 }}></div>
                   <button
-                    className={`post-action-btn ${post.bookmarked ? 'bookmarked' : ''}`}
+                    style={{ background: 'none', border: 'none', color: post.bookmarked ? 'var(--s-primary)' : 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', outline: 'none' }}
                     onClick={() => toggleBookmark(post.id)}
-                    id={`bookmark-post-${post.id}`}
                   >
-                    <Bookmark size={16} fill={post.bookmarked ? 'currentColor' : 'none'} /> Save
+                    <Bookmark size={16} fill={post.bookmarked ? 'currentColor' : 'none'} /> <span className="label-caps" style={{ fontSize: '10px' }}>ARCHIVE</span>
                   </button>
-                  <div style={{ marginLeft: 'auto', fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
-                    {post.bookmarks} saved
-                  </div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Sidebar */}
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Trending */}
-            <div className="sidebar-card">
-              <div className="sidebar-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <TrendingUp size={16} color="var(--s-primary)" /> Trending Topics
+            <div className="glass-panel" style={{ padding: '24px' }}>
+              <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '16px' }}>
+                <TrendingUp size={14} color="var(--s-primary)" /> ACTIVE FREQUENCIES
               </div>
-              {TRENDING_DATA.map((item, i) => (
-                <div key={item.tag} className="trending-item" onClick={() => addToast(`Filtering by ${item.tag}`, 'info')}>
-                  <span className="trending-rank">{i + 1}</span>
-                  <span className="trending-tag">{item.tag}</span>
-                  <span className="trending-count">{item.count} posts</span>
-                </div>
-              ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {TRENDING_DATA.map((item, i) => (
+                  <div key={item.tag} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => addToast(`FILTERING BY ${item.tag}`, 'info')}>
+                    <span className="label-caps" style={{ width: '24px', color: 'var(--s-primary)', opacity: 0.5 }}>0{i + 1}</span>
+                    <span className="label-caps" style={{ flex: 1, color: '#fff' }}>{item.tag}</span>
+                    <span className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>{item.count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Online Now */}
-            <div className="sidebar-card">
-              <div className="sidebar-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Users size={16} color="#4ade80" /> Online Now in Paris
+            <div className="glass-panel" style={{ padding: '24px' }}>
+              <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '16px' }}>
+                <Users size={14} color="#ceee93" /> OPERATIVES IN SECTOR
               </div>
-              <div className="who-online">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {ONLINE_USERS.map(u => (
-                  <div key={u.name} className="online-user">
+                  <div key={u.name} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div
-                      className="online-user-avatar"
-                      style={{ background: `linear-gradient(135deg, ${u.color}, ${u.color}88)`, color: '#fff', fontSize: '0.8rem', fontWeight: 'bold' }}
+                      style={{ width: '32px', height: '32px', border: `1px solid ${u.color}`, color: u.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Space Grotesk', fontSize: '9px', fontWeight: 'bold' }}
                     >
                       {u.initials}
                     </div>
-                    <div className="online-user-name">{u.name}</div>
-                    <div className="online-user-location" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><MapPin size={10} /> {u.location}</div>
+                    <div>
+                      <div className="label-caps" style={{ color: '#fff' }}>{u.name}</div>
+                      <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <MapPin size={10} /> {u.location.toUpperCase()}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
               <button
                 className="btn btn-secondary"
-                style={{ width: '100%', marginTop: '12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                style={{ width: '100%', marginTop: '24px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px' }}
                 onClick={() => navigate('buddy')}
-                id="sidebar-find-buddy-btn"
               >
-                <Users size={14} /> Find Travel Buddy
+                <Users size={14} /> <span className="label-caps">SCAN NETWORK</span>
               </button>
             </div>
 
             {/* Safety Tip Box */}
-            <div className="sidebar-card" style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.05))',
-              border: '1px solid rgba(124,58,237,0.2)',
-            }}>
-              <div className="sidebar-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Lightbulb size={16} color="#F59E0B" /> Daily Safety Tip
+            <div className="glass-panel" style={{ padding: '24px', border: '1px solid var(--s-primary)' }}>
+              <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--s-primary)', marginBottom: '16px' }}>
+                <Lightbulb size={14} /> DIRECTIVE PROTOCOL
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '14px' }}>
-                <strong>Shared location:</strong> Before heading somewhere unfamiliar, share your Google Maps live location with a trusted contact — it auto-expires in 1 hour. Fast and effective.
+              <p className="label-caps" style={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: '24px', fontSize: '10px' }}>
+                <strong style={{ color: '#fff' }}>LOCATION SHARING:</strong> BEFORE ENTERING UNCHARTED ZONES, BROADCAST YOUR LIVE POSITION TO A TRUSTED OPERATIVE. UTILIZE AUTO-EXPIRING DEAD DROPS FOR 1-HOUR TRACKING.
               </p>
               <button
                 className="btn btn-primary"
-                style={{ width: '100%', fontSize: '0.82rem', padding: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                style={{ width: '100%', fontSize: '0.75rem', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 onClick={() => navigate('map')}
               >
-                <Map size={14} /> Open Safety Map
+                <Map size={14} /> <span className="label-caps">ACCESS TERMINAL MAP</span>
               </button>
             </div>
           </div>
