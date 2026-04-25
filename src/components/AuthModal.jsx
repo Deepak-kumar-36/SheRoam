@@ -19,7 +19,7 @@ export default function AuthModal({ mode: initialMode = 'signin', onClose, onAut
     try {
       if (mode === 'signup') {
         const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-        await onAuth('signup', email, password, { name, initials, city: city || 'Global' })
+        await onAuth('signup', email, password, { name, initials, city: city || 'India' })
         addToast('ACCOUNT CREATED. CHECK EMAIL FOR VERIFICATION.', 'success')
       } else {
         await onAuth('signin', email, password)

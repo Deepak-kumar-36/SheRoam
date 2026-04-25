@@ -11,6 +11,12 @@ import CommunityPage from './pages/CommunityPage'
 import VerificationPage from './pages/VerificationPage'
 import AdminPanel from './pages/AdminPanel'
 import { useAuth } from './context/AuthProvider'
+import { db } from './lib/database'
+
+// Emails that bypass video verification (already verified externally)
+const BYPASS_VERIFICATION_EMAILS = [
+  'user@gmail.com'
+]
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -18,23 +24,45 @@ export default function App() {
   const isLoggedIn = !!session
   const [toasts, setToasts] = useState([])
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [verificationChecked, setVerificationChecked] = useState(false)
 
   // Build user object from real session data
   const user = authUser
     ? {
         name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Operative',
-        city: authUser.user_metadata?.city || 'Global',
+        city: authUser.user_metadata?.city || 'India',
         initials: authUser.user_metadata?.initials || authUser.email?.slice(0, 2).toUpperCase() || 'OP',
         tripDates: 'Active'
       }
-    : { name: 'Guest', city: 'Global', initials: 'G', tripDates: '' }
+    : { name: 'Guest', city: 'India', initials: 'G', tripDates: '' }
 
-  // Watch session state for auto-redirects
+  // Watch session state — check verification status before routing
   useEffect(() => {
     if (session && page === 'landing') {
-      setPage('verification')
+      const email = authUser?.email?.toLowerCase() || ''
+
+      // Check if this user should bypass verification
+      if (BYPASS_VERIFICATION_EMAILS.includes(email)) {
+        setPage('dashboard')
+        setVerificationChecked(true)
+        return
+      }
+
+      // Check DB for existing verification status
+      db.verification.getMyStatus().then(status => {
+        if (status?.status === 'approved') {
+          setPage('dashboard') // Already verified — skip
+        } else {
+          setPage('verification')
+        }
+        setVerificationChecked(true)
+      }).catch(() => {
+        setPage('verification')
+        setVerificationChecked(true)
+      })
     } else if (!session && page !== 'landing') {
       setPage('landing')
+      setVerificationChecked(false)
     }
   }, [session]) // eslint-disable-line
 
