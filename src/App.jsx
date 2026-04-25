@@ -8,6 +8,7 @@ import BuddyPage from './pages/BuddyPage'
 import SOSPage from './pages/SOSPage'
 import CommunityPage from './pages/CommunityPage'
 import VerificationPage from './pages/VerificationPage'
+import AdminPanel from './pages/AdminPanel'
 import { useAuth } from './context/AuthProvider'
 
 const DEMO_USER = { name: 'Anika R.', city: 'Paris', initials: 'AR', tripDates: 'Apr 24–28' }
@@ -68,6 +69,7 @@ export default function App() {
         {page === 'buddy'     && <BuddyPage {...sharedProps} />}
         {page === 'sos'       && <SOSPage   {...sharedProps} />}
         {page === 'community' && <CommunityPage {...sharedProps} />}
+        {page === 'admin'     && <AdminPanel {...sharedProps} />}
       </main>
 
       <ToastContainer toasts={toasts} />

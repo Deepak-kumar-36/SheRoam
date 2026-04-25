@@ -132,3 +132,28 @@ CREATE TABLE public.locations (
 ALTER TABLE public.locations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can view locations" ON public.locations FOR SELECT USING (true);
 
+-- 7. Create VERIFICATION_REQUESTS table for video-based identity verification
+CREATE TABLE public.verification_requests (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  video_url TEXT NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  reviewer_notes TEXT,
+  reviewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.verification_requests ENABLE ROW LEVEL SECURITY;
+-- Users can view their own verification requests
+CREATE POLICY "Users can view own verification requests"
+  ON public.verification_requests FOR SELECT USING (auth.uid() = user_id);
+-- Users can insert their own verification requests
+CREATE POLICY "Users can submit verification requests"
+  ON public.verification_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- Broad select for admin panel (all authenticated users can read all — admin password protects the UI)
+CREATE POLICY "Admin can view all verification requests"
+  ON public.verification_requests FOR SELECT USING (auth.role() = 'authenticated');
+-- Broad update for admin actions (approve/reject)
+CREATE POLICY "Admin can update verification requests"
+  ON public.verification_requests FOR UPDATE USING (auth.role() = 'authenticated');
+

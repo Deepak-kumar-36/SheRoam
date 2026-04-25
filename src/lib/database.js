@@ -152,5 +152,117 @@ export const db = {
       if (error) throw error
       return data
     }
+  },
+
+  verification: {
+    uploadVideo: async (blob) => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const fileName = `${user.id}_${Date.now()}.webm`
+      const { data, error } = await supabase.storage
+        .from('verification-videos')
+        .upload(fileName, blob, {
+          contentType: 'video/webm',
+          upsert: false
+        })
+      
+      if (error) throw error
+      return data.path
+    },
+
+    submitRequest: async (videoPath) => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await supabase
+        .from('verification_requests')
+        .insert([{
+          user_id: user.id,
+          video_url: videoPath,
+          status: 'pending'
+        }])
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+
+    getMyStatus: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return null
+
+      const { data, error } = await supabase
+        .from('verification_requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error // PGRST116 = no rows found
+      return data || null
+    },
+
+    getAllPending: async () => {
+      const { data, error } = await supabase
+        .from('verification_requests')
+        .select(`
+          *,
+          user:user_id (
+            name,
+            initials,
+            city
+          )
+        `)
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+      return data
+    },
+
+    getVideoUrl: (videoPath) => {
+      const { data } = supabase.storage
+        .from('verification-videos')
+        .getPublicUrl(videoPath)
+      return data.publicUrl
+    },
+
+    getVideoSignedUrl: async (videoPath) => {
+      const { data, error } = await supabase.storage
+        .from('verification-videos')
+        .createSignedUrl(videoPath, 3600) // 1 hour expiry
+      if (error) throw error
+      return data.signedUrl
+    },
+
+    approve: async (requestId, userId) => {
+      // Update the request status
+      const { error: reqError } = await supabase
+        .from('verification_requests')
+        .update({ status: 'approved', reviewed_at: new Date().toISOString() })
+        .eq('id', requestId)
+      if (reqError) throw reqError
+
+      // Mark user as verified
+      const { error: userError } = await supabase
+        .from('users')
+        .update({ is_verified: true, updated_at: new Date().toISOString() })
+        .eq('id', userId)
+      if (userError) throw userError
+    },
+
+    reject: async (requestId, notes = '') => {
+      const { error } = await supabase
+        .from('verification_requests')
+        .update({
+          status: 'rejected',
+          reviewer_notes: notes,
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', requestId)
+      if (error) throw error
+    }
   }
 }

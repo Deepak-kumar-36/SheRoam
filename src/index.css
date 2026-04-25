@@ -428,3 +428,64 @@ input:focus, textarea:focus {
   100% { opacity: 1; }
 }
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* ── Video Recording Controls ──────────────────────────── */
+.btn-record {
+  padding: 14px 28px;
+  font-family: var(--font-headline);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #ff4a8d;
+  background: rgba(255, 74, 141, 0.08);
+  color: #ff4a8d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-record:hover {
+  background: rgba(255, 74, 141, 0.15);
+  box-shadow: 0 0 20px rgba(255, 74, 141, 0.2);
+}
+.btn-record-active {
+  background: #ff4a8d;
+  color: #fff;
+  animation: record-pulse 1s ease-in-out infinite;
+}
+@keyframes record-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 74, 141, 0.4); }
+  50%      { box-shadow: 0 0 0 12px rgba(255, 74, 141, 0); }
+}
+
+/* REC indicator overlay */
+.rec-indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 74, 141, 0.3);
+  z-index: 15;
+}
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff4a8d;
+  animation: rec-blink 1s ease-in-out infinite;
+}
+@keyframes rec-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ── Admin Panel Queue ─────────────────────────────────── */
+.admin-queue-item:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
