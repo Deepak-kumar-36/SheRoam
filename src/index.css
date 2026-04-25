@@ -489,3 +489,106 @@ input:focus, textarea:focus {
 .admin-queue-item:hover {
   background: rgba(255, 255, 255, 0.03) !important;
 }
+
+/* ── Modal System ──────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 440px;
+  padding: 32px;
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* ── Route Input ───────────────────────────────────────── */
+.route-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.route-input:focus {
+  border-color: var(--s-primary);
+}
+
+.route-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Voice Guard Wave ──────────────────────────────────── */
+.voice-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+
+.voice-wave::before,
+.voice-wave::after,
+.voice-wave {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.voice-wave {
+  --bar-color: var(--s-primary);
+}
+
+@keyframes voice-bar {
+  0%, 100% { height: 4px; }
+  50%      { height: 14px; }
+}
+
+.voice-wave::before {
+  content: '';
+  width: 3px;
+  height: 8px;
+  background: var(--bar-color);
+  animation: voice-bar 0.6s ease-in-out infinite;
+}
+.voice-wave::after {
+  content: '';
+  width: 3px;
+  height: 12px;
+  background: var(--bar-color);
+  animation: voice-bar 0.6s ease-in-out 0.2s infinite;
+}
+
+/* ── Pulse Animation (SOS countdown) ───────────────────── */
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 74, 141, 0.4); }
+  50%      { box-shadow: 0 0 0 20px rgba(255, 74, 141, 0); }
+}

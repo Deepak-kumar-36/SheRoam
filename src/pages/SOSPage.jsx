@@ -1,42 +1,105 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { db } from '../lib/database'
-import { ShieldAlert, CheckCircle2, Shield, Phone, Globe, Radio, User, MapPin } from 'lucide-react'
+import { isSupported, startListening, stopListening } from '../lib/voiceDetection'
+import { ShieldAlert, CheckCircle2, Shield, Phone, Globe, Radio, User, MapPin, Mic, MicOff, X } from 'lucide-react'
 
 const CONTACTS = [
-  { id: 1, name: 'MOM',       initials: 'MM', color: '#ff4a8d', phone: '+1 (555) 210-0001' },
-  { id: 2, name: 'PRIYA',     initials: 'PR', color: '#f59e0b', phone: '+91 98800 11223' },
-  { id: 3, name: 'SHEROAM GUARDIAN', icon: <Shield size={16} />, color: '#ceee93', phone: 'PLATFORM' },
-  { id: 4, name: 'LOCAL POLICE', icon: <ShieldAlert size={16} />, color: '#ffffff', phone: '17 (FR)' },
+  { id: 1, name: 'WOMEN HELPLINE', initials: 'WH', color: '#ff4a8d', phone: '181' },
+  { id: 2, name: 'POLICE', icon: <ShieldAlert size={16} />, color: '#ffffff', phone: '100 / 112' },
+  { id: 3, name: 'AMBULANCE', initials: 'AM', color: '#f59e0b', phone: '108' },
+  { id: 4, name: 'SHEROAM GUARDIAN', icon: <Shield size={16} />, color: '#ceee93', phone: 'PLATFORM' },
 ]
 
 const EMERGENCY_NUMBERS = [
-  { country: 'FRANCE',      police: '17', ambulance: '15', fire: '18', women: '3919' },
-  { country: 'INDIA',       police: '100', ambulance: '108', fire: '101', women: '181' },
+  { country: 'INDIA',       police: '100 / 112', ambulance: '108', fire: '101', women: '181' },
+  { country: 'NCW',         police: '—', ambulance: '—', fire: '—', women: '7827-170-170' },
   { country: 'USA',         police: '911', ambulance: '911', fire: '911', women: '1-800-799-7233' },
   { country: 'UK',          police: '999', ambulance: '999', fire: '999', women: '0808 2000 247' },
-  { country: 'GERMANY',     police: '110', ambulance: '112', fire: '112', women: '08000 116 016' },
+  { country: 'FRANCE',      police: '17', ambulance: '15', fire: '18', women: '3919' },
 ]
 
 export default function SOSPage({ addToast }) {
   const [phase, setPhase] = useState('idle')   // idle | confirm | alerting | sent
   const [alertedCount, setAlertedCount] = useState(0)
-  const [coords, setCoords] = useState({ lat: 48.8613, lng: 2.3522, display: 'LOCATING...' })
+  const [coords, setCoords] = useState({ lat: 28.6139, lng: 77.2090, display: 'LOCATING...' })
   const [activeLogId, setActiveLogId] = useState(null)
   const intervalRef = useRef(null)
+
+  // ── Voice Guard State ──
+  const [voiceActive, setVoiceActive] = useState(false)
+  const [voiceSupported] = useState(isSupported())
+  const [liveTranscript, setLiveTranscript] = useState('')
+  const [detectedWord, setDetectedWord] = useState(null)
+  const [countdown, setCountdown] = useState(null)
+  const countdownRef = useRef(null)
 
   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude, display: `${pos.coords.latitude.toFixed(4)}° N, ${pos.coords.longitude.toFixed(4)}° E` }),
-        err => setCoords(prev => ({ ...prev, display: 'GPS SIGNAL LOST (USING LAST KNOWN)' }))
+        () => setCoords(prev => ({ ...prev, display: 'GPS SIGNAL LOST (USING DEFAULT: DELHI)' }))
       )
     } else {
       setCoords(prev => ({ ...prev, display: 'GPS UNAVAILABLE' }))
     }
   }, [])
 
+  // ── Voice Guard Callbacks ──
+  const handleDistressDetected = useCallback((word, transcript) => {
+    setDetectedWord(word.toUpperCase())
+    setLiveTranscript(transcript)
+    
+    // Start 5-second countdown then auto-trigger SOS
+    let timer = 5
+    setCountdown(timer)
+    countdownRef.current = setInterval(() => {
+      timer--
+      setCountdown(timer)
+      if (timer <= 0) {
+        clearInterval(countdownRef.current)
+        setCountdown(null)
+        setDetectedWord(null)
+        sendSOS() // Auto-trigger
+      }
+    }, 1000)
+  }, [])
+
+  const cancelVoiceSOS = () => {
+    clearInterval(countdownRef.current)
+    setCountdown(null)
+    setDetectedWord(null)
+    addToast('VOICE SOS CANCELLED.', 'info')
+  }
+
+  const toggleVoiceGuard = () => {
+    if (voiceActive) {
+      stopListening()
+      setVoiceActive(false)
+      setLiveTranscript('')
+      addToast('VOICE GUARD DEACTIVATED.', 'info')
+    } else {
+      const ok = startListening(
+        handleDistressDetected,
+        (text) => setLiveTranscript(text),
+        (err) => addToast(err, 'error')
+      )
+      if (ok) {
+        setVoiceActive(true)
+        addToast('VOICE GUARD ACTIVE — LISTENING FOR DISTRESS SIGNALS...', 'success')
+      }
+    }
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopListening()
+      clearInterval(countdownRef.current)
+    }
+  }, [])
+
   const openConfirm = () => setPhase('confirm')
-  const cancelSOS   = () => { setPhase('idle'); setAlertedCount(0); }
+  const cancelSOS   = () => { setPhase('idle'); setAlertedCount(0) }
 
   const sendSOS = async () => {
     setPhase('alerting')
@@ -45,13 +108,11 @@ export default function SOSPage({ addToast }) {
     try {
       const log = await db.sos.sendAlert(coords.lat, coords.lng)
       setActiveLogId(log.id)
-    } catch (e) {
+    } catch {
       addToast('SOS DATABASE LINK FAILED. ATTEMPTING LOCAL BROADCAST.', 'error')
     }
 
     setAlertedCount(1)
-    
-    // Simulate notifying contacts individually
     let contactsAlerted = 1
     intervalRef.current = setInterval(() => {
       contactsAlerted += 1
@@ -68,8 +129,8 @@ export default function SOSPage({ addToast }) {
     if (activeLogId) {
       try {
         await db.sos.cancelAlert(activeLogId)
-      } catch (e) {
-        addToast('FAILED TO UPDATE DB STATUS. RETRYING...', 'error')
+      } catch {
+        addToast('FAILED TO UPDATE DB STATUS.', 'error')
       }
     }
     setPhase('idle')
@@ -79,8 +140,6 @@ export default function SOSPage({ addToast }) {
   }
 
   useEffect(() => () => clearInterval(intervalRef.current), [])
-
-  const isSending = phase === 'alerting' || phase === 'sent'
 
   return (
     <div className="page flex-center" style={{ minHeight: '100vh', flexDirection: 'column' }}>
@@ -95,9 +154,28 @@ export default function SOSPage({ addToast }) {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(0, 1fr)', gap: '32px', alignItems: 'start' }}>
-          {/* ── Left: SOS Button Area ──────────────────────────────────── */}
+          {/* ── Left: SOS Button Area ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center' }}>
-            {phase === 'idle' && (
+
+            {/* Voice Distress Countdown Overlay */}
+            {detectedWord && countdown !== null && (
+              <div className="glass-panel" style={{ width: '100%', padding: '24px', textAlign: 'center', borderTop: '2px solid #ff4a8d', animation: 'pulse 1s ease-in-out infinite' }}>
+                <div className="label-caps" style={{ color: '#ff4a8d', fontSize: '0.85rem', marginBottom: '8px' }}>
+                  DISTRESS DETECTED: "{detectedWord}"
+                </div>
+                <div style={{ fontSize: '3rem', fontFamily: 'Space Grotesk', color: '#ff4a8d', fontWeight: 700, margin: '16px 0' }}>
+                  {countdown}
+                </div>
+                <div className="label-caps" style={{ opacity: 0.7, marginBottom: '16px', fontSize: '10px' }}>
+                  AUTO-TRIGGERING SOS IN {countdown} SECONDS...
+                </div>
+                <button className="btn btn-secondary" style={{ padding: '12px 32px' }} onClick={cancelVoiceSOS}>
+                  <X size={14} style={{ marginRight: '6px' }} /> CANCEL
+                </button>
+              </div>
+            )}
+
+            {phase === 'idle' && !detectedWord && (
               <>
                 <div style={{ position: 'relative', width: '240px', height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ position: 'absolute', inset: 0, border: '1px solid #ff4a8d', borderRadius: '50%', opacity: 0.2, animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}></div>
@@ -112,20 +190,72 @@ export default function SOSPage({ addToast }) {
                   </button>
                 </div>
 
-                {/* Live Tracking status */}
-                <div className="glass-panel" style={{ width: '100%', padding: '24px' }}>
-                  <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--s-primary)', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
+                {/* Voice Guard Toggle */}
+                <div className="glass-panel" style={{ width: '100%', padding: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
+                    <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: voiceActive ? 'var(--s-primary)' : 'rgba(255,255,255,0.5)' }}>
+                      {voiceActive ? <Mic size={14} /> : <MicOff size={14} />}
+                      VOICE GUARD
+                    </div>
+                    {voiceSupported ? (
+                      <button
+                        onClick={toggleVoiceGuard}
+                        style={{
+                          padding: '6px 16px',
+                          background: voiceActive ? 'rgba(206,238,147,0.15)' : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${voiceActive ? 'var(--s-primary)' : 'rgba(255,255,255,0.1)'}`,
+                          color: voiceActive ? 'var(--s-primary)' : 'rgba(255,255,255,0.5)',
+                          cursor: 'pointer',
+                          fontFamily: 'Space Grotesk',
+                          fontSize: '0.65rem',
+                          letterSpacing: '0.1em',
+                          transition: 'all 0.3s'
+                        }}
+                      >
+                        {voiceActive ? 'ACTIVE' : 'ACTIVATE'}
+                      </button>
+                    ) : (
+                      <span className="label-caps" style={{ fontSize: '9px', color: '#f59e0b' }}>CHROME/EDGE ONLY</span>
+                    )}
+                  </div>
+
+                  {voiceActive ? (
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <div className="voice-wave"></div>
+                        <span className="label-caps" style={{ color: 'var(--s-primary)', fontSize: '10px' }}>LISTENING FOR DISTRESS...</span>
+                      </div>
+                      {liveTranscript && (
+                        <div style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'Space Grotesk', fontStyle: 'italic' }}>
+                          "{liveTranscript}"
+                        </div>
+                      )}
+                      <div className="label-caps" style={{ marginTop: '12px', opacity: 0.3, fontSize: '9px', lineHeight: 1.5 }}>
+                        KEYWORDS: BACHAO, MADAD, HELP, POLICE, SOS<br/>
+                        WILL AUTO-TRIGGER SOS WITH 5s COUNTDOWN
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="label-caps" style={{ opacity: 0.4, fontSize: '10px', lineHeight: 1.5 }}>
+                      ACTIVATE TO LISTEN FOR DISTRESS WORDS LIKE "BACHAO" OR "HELP" — SOS WILL TRIGGER AUTOMATICALLY.
+                    </div>
+                  )}
+                </div>
+
+                {/* Live Tracking */}
+                <div className="glass-panel" style={{ width: '100%', padding: '20px' }}>
+                  <div className="label-caps" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--s-primary)', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
                     <div style={{ width: 8, height: 8, background: 'var(--s-primary)', borderRadius: '50%', boxShadow: 'var(--glow-primary)' }}></div>
                     LIVE TRACKING READY
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><MapPin size={14} /> COORDINATES</span>
-                      <span className="label-caps" style={{ color: '#fff' }}>{coords.display}</span>
+                      <span className="label-caps" style={{ color: '#fff', fontSize: '10px' }}>{coords.display}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><User size={14} /> CONTACTS READY</span>
-                      <span className="label-caps" style={{ color: '#fff' }}>{CONTACTS.length} OPERATIVES</span>
+                      <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><User size={14} /> CONTACTS</span>
+                      <span className="label-caps">{CONTACTS.length} OPERATIVES</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span className="label-caps" style={{ opacity: 0.5, display: 'flex', alignItems: 'center', gap: '8px' }}><Shield size={14} /> ENCRYPTION</span>
@@ -136,7 +266,7 @@ export default function SOSPage({ addToast }) {
               </>
             )}
 
-            {/* ── Alerting state ──────────────────────────────────────── */}
+            {/* ── Alerting state ── */}
             {(phase === 'alerting' || phase === 'sent') && (
               <>
                 <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -151,19 +281,14 @@ export default function SOSPage({ addToast }) {
                     {phase === 'sent' ? 'EMERGENCY ALERT SENT' : 'TRANSMITTING ALERTS...'}
                   </div>
                   <div className="label-caps" style={{ opacity: 0.6, fontSize: '10px', marginBottom: '24px' }}>
-                    {phase === 'sent'
-                      ? 'HELP IS EN ROUTE. DO NOT CLOSE TERMINAL.'
-                      : 'BROADCASTING GPS COORDINATES...'}
+                    {phase === 'sent' ? 'HELP IS EN ROUTE. DO NOT CLOSE TERMINAL.' : 'BROADCASTING GPS COORDINATES...'}
                   </div>
-
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
                     {CONTACTS.map((c, i) => {
                       const sent = i < alertedCount
                       return (
                         <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', opacity: sent ? 1 : 0.3, transition: 'opacity 0.5s' }}>
-                          <span style={{ fontSize: '1rem' }}>
-                            {sent ? <CheckCircle2 size={16} color="var(--s-primary)" /> : <div style={{ width: 8, height: 8, background: 'var(--s-primary)', borderRadius: '50%' }}></div>}
-                          </span>
+                          <span>{sent ? <CheckCircle2 size={16} color="var(--s-primary)" /> : <div style={{ width: 8, height: 8, background: 'var(--s-primary)', borderRadius: '50%' }}></div>}</span>
                           <div style={{ flex: 1 }}>
                             <div className="label-caps">{c.name}</div>
                             <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>{c.phone}</div>
@@ -172,13 +297,8 @@ export default function SOSPage({ addToast }) {
                       )
                     })}
                   </div>
-
                   {phase === 'sent' && (
-                    <button
-                      className="btn btn-secondary"
-                      style={{ width: '100%', marginTop: '32px', borderColor: 'var(--s-primary)', color: 'var(--s-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                      onClick={markSafe}
-                    >
+                    <button className="btn btn-secondary" style={{ width: '100%', marginTop: '32px', borderColor: 'var(--s-primary)', color: 'var(--s-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onClick={markSafe}>
                       <CheckCircle2 size={16} /> <span className="label-caps">I AM SAFE — CANCEL ALERT</span>
                     </button>
                   )}
@@ -187,13 +307,13 @@ export default function SOSPage({ addToast }) {
             )}
           </div>
 
-          {/* ── Right sidebar: Emergency numbers ───────────────────────── */}
+          {/* ── Right sidebar ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div className="glass-panel" style={{ padding: '24px' }}>
+            <div className="glass-panel" style={{ padding: '20px' }}>
               <div className="label-caps" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Phone size={14} /> EMERGENCY CONTACTS
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {CONTACTS.map(c => (
                   <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -208,18 +328,18 @@ export default function SOSPage({ addToast }) {
               </div>
             </div>
 
-            <div className="glass-panel" style={{ padding: '24px' }}>
+            <div className="glass-panel" style={{ padding: '20px' }}>
               <div className="label-caps" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Globe size={14} /> GLOBAL EMERGENCY FREQUENCIES
+                <Globe size={14} /> EMERGENCY FREQUENCIES — INDIA FIRST
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr 1fr', gap: '12px', alignItems: 'center' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr 1fr', gap: '10px', alignItems: 'center' }}>
                 <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>SECTOR</div>
                 <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>POLICE</div>
                 <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>MED</div>
                 <div className="label-caps" style={{ opacity: 0.5, fontSize: '9px' }}>WOMEN</div>
                 {EMERGENCY_NUMBERS.map(r => (
                   <div style={{ display: 'contents' }} key={r.country}>
-                    <div className="label-caps" style={{ color: '#fff' }}>{r.country}</div>
+                    <div className="label-caps" style={{ color: r.country === 'INDIA' ? 'var(--s-primary)' : '#fff' }}>{r.country}</div>
                     <span className="label-caps">{r.police}</span>
                     <span className="label-caps">{r.ambulance}</span>
                     <span className="label-caps" style={{ color: '#ff4a8d' }}>{r.women}</span>
@@ -231,10 +351,10 @@ export default function SOSPage({ addToast }) {
         </div>
       </div>
 
-      {/* ── SOS Confirmation Modal ──────────────────── */}
+      {/* ── SOS Confirmation Modal ── */}
       {phase === 'confirm' && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={e => e.target === e.currentTarget && cancelSOS()}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '400px', borderTop: '2px solid #ff4a8d', padding: '32px', textAlign: 'center' }}>
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && cancelSOS()}>
+          <div className="glass-panel modal-panel" style={{ borderTop: '2px solid #ff4a8d', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
               <ShieldAlert size={48} color="#ff4a8d" />
             </div>
@@ -242,20 +362,11 @@ export default function SOSPage({ addToast }) {
             <div className="label-caps" style={{ opacity: 0.7, marginBottom: '32px', lineHeight: 1.6, fontSize: '10px' }}>
               YOUR CURRENT COORDINATES ({coords.display}) AND A DISTRESS SIGNAL WILL BE BROADCAST TO <strong style={{ color: 'var(--s-primary)' }}>{CONTACTS.length} OPERATIVES</strong>.
             </div>
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <button
-                className="btn btn-danger neon-glow"
-                style={{ width: '100%', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                onClick={sendSOS}
-              >
+              <button className="btn btn-danger neon-glow" style={{ width: '100%', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} onClick={sendSOS}>
                 <ShieldAlert size={16} /> <span className="label-caps">INITIATE BROADCAST</span>
               </button>
-              <button
-                className="btn btn-secondary"
-                style={{ width: '100%', padding: '16px' }}
-                onClick={cancelSOS}
-              >
+              <button className="btn btn-secondary" style={{ width: '100%', padding: '16px' }} onClick={cancelSOS}>
                 <span className="label-caps">ABORT</span>
               </button>
             </div>

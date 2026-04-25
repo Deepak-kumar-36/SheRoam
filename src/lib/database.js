@@ -264,5 +264,120 @@ export const db = {
         .eq('id', requestId)
       if (error) throw error
     }
+  },
+
+  locations: {
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('locations')
+        .select('*')
+        .order('created_at', { ascending: true })
+      if (error) throw error
+      return data
+    },
+    getByArea: async (lat, lng, radiusKm = 50) => {
+      // Simple bounding-box filter (no PostGIS needed)
+      const latDelta = radiusKm / 111 // ~111km per degree latitude
+      const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180))
+      const { data, error } = await supabase
+        .from('locations')
+        .select('*')
+        .gte('latitude', lat - latDelta)
+        .lte('latitude', lat + latDelta)
+        .gte('longitude', lng - lngDelta)
+        .lte('longitude', lng + lngDelta)
+      if (error) throw error
+      return data
+    }
+  },
+
+  safeScores: {
+    submit: async (lat, lng, placeName, score, comment = '') => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Must be logged in to rate')
+      const { data, error } = await supabase
+        .from('safe_scores')
+        .insert([{
+          user_id: user.id,
+          latitude: lat,
+          longitude: lng,
+          place_name: placeName,
+          score,
+          comment
+        }])
+        .select()
+        .single()
+      if (error) throw error
+      return data
+    },
+    getForArea: async (lat, lng, radiusKm = 20) => {
+      const latDelta = radiusKm / 111
+      const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180))
+      const { data, error } = await supabase
+        .from('safe_scores')
+        .select('*')
+        .gte('latitude', lat - latDelta)
+        .lte('latitude', lat + latDelta)
+        .gte('longitude', lng - lngDelta)
+        .lte('longitude', lng + lngDelta)
+      if (error) throw error
+      return data
+    },
+    getAggregateForPlace: async (placeName) => {
+      const { data, error } = await supabase
+        .from('safe_scores')
+        .select('score')
+        .ilike('place_name', `%${placeName}%`)
+      if (error) throw error
+      if (!data || data.length === 0) return { avgScore: 0, totalRatings: 0, percentage: 0 }
+      const avg = data.reduce((s, r) => s + r.score, 0) / data.length
+      return { avgScore: Math.round(avg * 10) / 10, totalRatings: data.length, percentage: Math.round((avg / 10) * 100) }
+    }
+  },
+
+  incidents: {
+    report: async (lat, lng, locationName, type, description = '') => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Must be logged in to report')
+      const { data, error } = await supabase
+        .from('incidents')
+        .insert([{
+          reporter_id: user.id,
+          latitude: lat,
+          longitude: lng,
+          location_name: locationName,
+          incident_type: type,
+          description
+        }])
+        .select()
+        .single()
+      if (error) throw error
+      return data
+    },
+    getForArea: async (lat, lng, radiusKm = 50) => {
+      const latDelta = radiusKm / 111
+      const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180))
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .gte('latitude', lat - latDelta)
+        .lte('latitude', lat + latDelta)
+        .gte('longitude', lng - lngDelta)
+        .lte('longitude', lng + lngDelta)
+        .order('reported_at', { ascending: false })
+      if (error) throw error
+      return data
+    },
+    getStatsForPlace: async (placeName) => {
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('incident_type')
+        .ilike('location_name', `%${placeName}%`)
+      if (error) throw error
+      if (!data) return { totalIncidents: 0, breakdown: {} }
+      const breakdown = {}
+      data.forEach(d => { breakdown[d.incident_type] = (breakdown[d.incident_type] || 0) + 1 })
+      return { totalIncidents: data.length, breakdown }
+    }
   }
 }
