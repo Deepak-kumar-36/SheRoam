@@ -3,28 +3,43 @@
 ![SheRoam Banner](https://img.shields.io/badge/Design_System-Spade-ceee93?style=for-the-badge)
 ![Supabase](https://img.shields.io/badge/Backend-Supabase-3ecf8e?style=for-the-badge&logo=supabase)
 ![React](https://img.shields.io/badge/Frontend-React_19-61dafb?style=for-the-badge&logo=react)
+![Map](https://img.shields.io/badge/Safety_Map-India_Centric-ff4a8d?style=for-the-badge)
 
-**SheRoam** is a premium, high-tech women's safety platform designed with a focus on editorial typography, glassmorphism, and real-time backend integration. It replaces traditional "alarm" apps with a high-fidelity, command-center aesthetic that empowers users through data-driven safety insights.
+**SheRoam** is a premium, high-tech women's safety platform transformed for the Indian landscape. Designed with a focus on editorial typography, glassmorphism, and real-time backend integration, it provides localized safety intel, safe routing, and rapid emergency protocols tailored for the unique needs of women in India.
 
 ---
 
 ## ⚡ Core Features
 
-### 🛡️ Identity Verification
-ML-inspired biometric scanning sequence. Users verify their identity via a high-contrast camera interface to unlock verified "Buddy" matchmaking and community features.
-*(Requires HTTPS to activate browser camera)*
-
-### 🛰️ Live S.O.S Command Center
-A rapid-response emergency protocol dashboard. One-tap distress broadcasting that captures live GPS coordinates via `navigator.geolocation` and synchronizes them to a Supabase `emergency_logs` database for immediate operative tracking.
-
-### 🗺️ Terminal Navigation Map
-Interactive geospatial dashboard using **React-Leaflet** and **CartoDB Dark Matter** tiles.
+### 🗺️ India-Centric Threat Map
+Interactive geospatial dashboard pre-seeded with major Indian cities and safety data (Delhi, Mumbai, Bangalore, etc.).
+- **Nominatim Search:** Search any Indian city or location with localized geocoding.
 - **Risk Zones:** Real-time overlays indicating high, moderate, and safe corridors.
 - **Verified Stays:** Pins for SheStay™ vetted locations.
-- **Live Tracking:** Dynamic user markers that update as you move.
+- **Live Incidents:** Real-time markers for reported harassment, theft, and assault.
 
-### 💬 Realtime Buddy Network
-WebSocket-powered chat system using Supabase Realtime Channels. Connect with other solo travelers and locals without polling latency, featuring end-to-end mission-style UI.
+### 🛡️ Identity & Video Verification
+Secure verification flow for the Indian community.
+- **Video Submission:** Record a short video with ID proof for manual admin verification.
+- **Admin Terminal:** Dedicated portal for a female verification team to approve new operatives.
+
+### 🛰️ Safe Route Finder
+AI-powered routing integrated with **OpenRouteService (ORS)**.
+- **Safety Analysis:** Automatically calculates the safest path between two points in India.
+- **Color-coded Segments:** Green (Safe) → Amber (Moderate) → Red (High Risk) based on proximity to reported incidents and community scores.
+- **GPS Integration:** One-tap "My Location" routing.
+
+### 🎤 Voice Guard S.O.S
+Advanced distress detection using the **Web Speech API**.
+- **Multi-lingual Detection:** Listens for distress keywords in both **Hindi** ("Bachao", "Madad") and **English** ("Help", "Police").
+- **Auto-Trigger:** Detection initiates a 5-second countdown before automatically broadcasting an S.O.S signal.
+- **GPS Sync:** Synchronizes live coordinates to the Supabase `emergency_logs` for immediate response.
+
+### 📊 Community Safety Scoring
+Crowd-sourced safety intelligence.
+- **Safe Score:** Rate any location from 0–10 based on personal safety experience.
+- **Incident Reporting:** Anonymous reporting for different incident types (Harassment, Stalking, etc.).
+- **Area Intel:** Summary statistics shown for locations, including community percentage scores and incident breakdowns.
 
 ---
 
@@ -32,6 +47,8 @@ WebSocket-powered chat system using Supabase Realtime Channels. Connect with oth
 
 - **Framework:** [Vite](https://vitejs.dev/) + [React 19](https://react.dev/)
 - **Backend:** [Supabase](https://supabase.com/) (Auth, PostgreSQL, Realtime, Storage)
+- **Routing:** [OpenRouteService (ORS)](https://openrouteservice.org/)
+- **Voice Engine:** Web Speech API
 - **Maps:** [Leaflet](https://leafletjs.com/) via `react-leaflet`
 - **Icons:** [Lucide React](https://lucide.dev/)
 - **Design System:** Custom **Spade System** (Neon Lime `#ceee93`, Glassmorphism, Space Grotesk Typography)
@@ -43,6 +60,7 @@ WebSocket-powered chat system using Supabase Realtime Channels. Connect with oth
 ### 1. Prerequisites
 - Node.js (v18+)
 - A Supabase Project ([Create one here](https://supabase.com/))
+- An OpenRouteService API Key ([Register here](https://openrouteservice.org/dev/#/signup))
 
 ### 2. Installation
 ```bash
@@ -52,19 +70,19 @@ npm install
 ```
 
 ### 3. Environment Setup
-Create a `.env` file in the root directory and add your Supabase credentials:
+Create a `.env` file in the root directory and add your credentials:
 ```env
 VITE_SUPABASE_URL=your_project_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_ORS_API_KEY=your_ors_api_key
+VITE_ADMIN_PASSWORD=your_admin_panel_entry_password
 ```
 
 ### 4. Database Setup
-Run the SQL commands found in `schema.sql` within your Supabase SQL Editor to provision the following tables:
-- `users` (extended with `is_verified`)
-- `posts` (for community feeds)
-- `messages` (realtime chat)
-- `emergency_logs` (S.O.S tracking)
-- `locations` (map pins)
+Run the SQL commands found in `schema.sql` within your Supabase SQL Editor to provision the following:
+- **Core Tables:** `users`, `posts`, `messages`, `emergency_logs`.
+- **Safety Data:** `safe_scores`, `incidents`, `locations`.
+- **Seed Data:** Includes 40+ major Indian safety zones and landmarks.
 
 ### 5. Launch
 ```bash
@@ -75,19 +93,18 @@ npm run dev
 
 ## 🌐 Deployment
 
-SheRoam is ready for deployment on **Vercel** or **Netlify**.
+SheRoam is optimized for deployment on **Vercel**.
 
 > [!IMPORTANT]
-> **HTTPS is MANDATORY.** Browser features like `navigator.mediaDevices` (Camera) and `navigator.geolocation` (GPS) will not function on non-secure origins.
+> **HTTPS is MANDATORY.** Browser features like `Web Speech API` (Voice Guard), `navigator.mediaDevices` (Camera Verification), and `navigator.geolocation` (GPS) will not function on non-secure origins.
 
 ---
 
 ## 🎨 Design Philosophy (Spade)
-SheRoam utilizes the **Spade** design philosophy:
 - **Neon Accents:** Primary `#ceee93` (Neon Lime) for visibility in low-light environments.
+- **Aesthetic Focus:** Transitioning towards a softer, aesthetic palette tailored for intuitive use.
 - **Editorial Typography:** Bold, all-caps identifiers using *Space Grotesk*.
-- **Glassmorphism:** Frosted paneling to maintain context with underlying data layers.
 
 ---
 
-*Built with ❤️ for Global Women's Safety.*
+*Built with ❤️ for Women's Safety in India.*
